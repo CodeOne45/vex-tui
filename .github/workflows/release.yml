@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build binaries
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          LDFLAGS="-s -w -X main.version=$VERSION"
+
+          mkdir -p dist
+
+          GOOS=darwin GOARCH=amd64 go build -ldflags="$LDFLAGS" -trimpath -o dist/vex-darwin-amd64 .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -trimpath -o dist/vex-darwin-arm64 .
+          GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -trimpath -o dist/vex-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -ldflags="$LDFLAGS" -trimpath -o dist/vex-linux-arm64 .
+          GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -trimpath -o dist/vex-windows-amd64.exe .
+
+          cd dist
+          sha256sum * > checksums.txt
+
+      - name: Create archives
+        run: |
+          cd dist
+          tar czf vex-darwin-amd64.tar.gz vex-darwin-amd64
+          tar czf vex-darwin-arm64.tar.gz vex-darwin-arm64
+          tar czf vex-linux-amd64.tar.gz vex-linux-amd64
+          tar czf vex-linux-arm64.tar.gz vex-linux-arm64
+          zip vex-windows-amd64.zip vex-windows-amd64.exe
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # Extract changelog for this version
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' > release_notes.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/checksums.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

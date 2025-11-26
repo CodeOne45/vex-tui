@@ -1,0 +1,179 @@
+# 📊 Excel TUI v2.0
+
+A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built with Go.
+
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/excel-tui/releases)
+
+## ✨ Features
+
+### 🎨 Six Beautiful Themes
+- **Catppuccin Mocha** - Soft pastels, perfect for all-day use
+- **Nord** - Cool Arctic blues, minimal and focused
+- **Rosé Pine** - Elegant rose tones, sophisticated
+- **Tokyo Night** - Vibrant cyberpunk aesthetic
+- **Gruvbox** - Warm retro colors, comfortable
+- **Dracula** - Classic high contrast theme
+
+### 🔍 Powerful Navigation
+- Vim-style keybindings (hjkl) and arrow keys
+- Jump to any cell (Ctrl+G) with multiple format support
+- Page Up/Down, Home/End
+- Search across all cells and formulas (/)
+- Navigate search results (n/N)
+
+### 📋 Data Operations
+- Copy cell (c) or entire row (C)
+- Export to CSV or JSON
+- Toggle formula display (f)
+- View detailed cell information (Enter)
+
+### 📑 File Support
+- Excel files (.xlsx, .xlsm, .xls)
+- CSV files
+- Multiple sheets with Tab navigation
+- Formula display and evaluation
+- Large file optimization with lazy loading
+
+## 🚀 Installation
+
+### Using go install
+
+```bash
+go install github.com/excel-tui@latest
+```
+
+### Build from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/excel-tui/excel-tui.git
+cd excel-tui
+
+# Install dependencies
+go mod download
+
+# Build
+go build -o excel-tui .
+
+# Optional: Install globally
+go install
+```
+
+### Download Binary
+
+Download pre-built binaries from the [releases page](https://github.com/excel-tui/releases).
+
+## 📖 Usage
+
+```bash
+# Basic usage
+excel-tui data.xlsx
+
+# With a specific theme
+excel-tui report.csv --theme nord
+
+# Short flag
+excel-tui sales.xlsx -t tokyo-night
+```
+
+## ⌨️ Keyboard Shortcuts
+
+### Navigation
+- `↑↓←→` or `hjkl` - Navigate cells
+- `Page Up/Down` - Scroll by page
+- `Ctrl+U/D` - Alternative page scroll
+- `Home/End` or `0/$` - First/last column
+- `g/G` - First/last column
+- `Tab/Shift+Tab` - Next/previous sheet
+
+### Search & Actions
+- `/` - Search (vim-style)
+- `n/N` - Next/previous result
+- `Ctrl+G` - Jump to cell
+- `Enter` - View cell details
+- `c` - Copy cell
+- `C` - Copy entire row
+- `f` - Toggle formula display
+- `e` - Export sheet
+- `t` - Theme selector
+- `?` - Toggle help
+- `q` or `Ctrl+C` - Quit
+
+## 🏗️ Project Structure
+
+```
+excel-tui/
+├── main.go                 # Application entry point
+├── internal/
+│   ├── app/               # Application logic
+│   │   ├── model.go       # State management
+│   │   ├── update.go      # Event handling
+│   │   ├── view.go        # Rendering logic
+│   │   └── keys.go        # Keybindings
+│   ├── loader/            # File I/O operations
+│   │   └── loader.go
+│   ├── theme/             # Theme management
+│   │   └── theme.go
+│   └── ui/                # UI utilities
+│       └── ui.go
+└── pkg/
+    └── models/            # Data models
+        └── models.go
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/excel-tui/excel-tui.git
+cd excel-tui
+
+# Install dependencies
+go mod download
+
+# Run tests
+go test ./...
+
+# Build
+go build -o excel-tui .
+```
+
+### Code Style
+
+This project follows standard Go conventions:
+- Run `go fmt` before committing
+- Follow [Effective Go](https://golang.org/doc/effective_go.html) guidelines
+- Write clear commit messages
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with the amazing [Charm](https://charm.sh/) ecosystem
+  - [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework
+  - [Lipgloss](https://github.com/charmbracelet/lipgloss) - Terminal styling
+  - [Bubbles](https://github.com/charmbracelet/bubbles) - TUI components
+- Excel parsing by [Excelize](https://github.com/xuri/excelize)
+- Clipboard support by [clipboard](https://github.com/atotto/clipboard)
+- Themes inspired by [Catppuccin](https://github.com/catppuccin/catppuccin), [Nord](https://www.nordtheme.com/), [Rosé Pine](https://rosepinetheme.com/), [Tokyo Night](https://github.com/enkia/tokyo-night-vscode-theme), [Gruvbox](https://github.com/morhetz/gruvbox), and [Dracula](https://draculatheme.com/)
+
+## 🔒 Security
+
+If you discover a security vulnerability, please send an email to [security@excel-tui.dev](mailto:security@excel-tui.dev). All security vulnerabilities will be promptly addressed.
+
+## 📮 Contact
+
+- GitHub: [@excel-tui](https://github.com/excel-tui)
+- Issues: [GitHub Issues](https://github.com/excel-tui/excel-tui/issues)
+
+---
+
+Made with ❤️ for terminal enthusiasts everywhere.
