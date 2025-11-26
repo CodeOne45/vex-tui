@@ -1,0 +1,16 @@
+Product,Category,Price,Quantity,Revenue,Profit Margin,Region,Sales Rep
+Laptop Pro,Electronics,1299.99,45,58499.55,35%,North,Alice Johnson
+Wireless Mouse,Accessories,29.99,234,7017.66,48%,South,Bob Smith
+USB-C Hub,Accessories,49.99,156,7798.44,42%,East,Carol Davis
+Monitor 27,Electronics,399.99,89,35599.11,28%,West,David Wilson
+Keyboard Mechanical,Accessories,149.99,78,11699.22,52%,North,Alice Johnson
+Webcam HD,Electronics,79.99,123,9838.77,45%,South,Bob Smith
+Desk Lamp,Office,34.99,267,9342.33,38%,East,Carol Davis
+Office Chair,Furniture,249.99,34,8499.66,25%,West,David Wilson
+Notebook Set,Office,12.99,445,5780.55,65%,North,Alice Johnson
+Pen Pack,Office,4.99,892,4451.08,70%,South,Bob Smith
+Laptop Stand,Accessories,39.99,167,6678.33,44%,East,Carol Davis
+Cable Organizer,Accessories,14.99,334,5006.66,58%,West,David Wilson
+Phone Holder,Accessories,19.99,289,5777.11,55%,North,Alice Johnson
+Headphones Pro,Electronics,199.99,67,13399.33,32%,South,Bob Smith
+Mouse Pad XL,Accessories,24.99,198,4946.02,60%,East,Carol Davis
