@@ -32,6 +32,12 @@ type Model struct {
 	filename      string
 	themeName     string
 	styles        *ui.Styles
+	
+	// Chart visualization
+	chartType     int
+	selectStart   [2]int // [row, col]
+	selectEnd     [2]int // [row, col]
+	isSelecting   bool
 }
 
 // NewModel creates a new application model

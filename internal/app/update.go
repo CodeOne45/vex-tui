@@ -40,6 +40,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m.updateExport(msg)
 		case models.ModeTheme:
 			return m.updateTheme(msg)
+		case models.ModeChart:
+			return m.updateChart(msg)
+		case models.ModeSelectRange:
+			return m.updateSelectRange(msg)
 		default:
 			return m.updateNormal(msg)
 		}
@@ -204,6 +208,32 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.Help):
 		m.help.ShowAll = !m.help.ShowAll
+		return m, nil
+
+	case key.Matches(msg, m.keys.Visualize):
+		if !m.isSelecting {
+			m.status = models.StatusMsg{Message: "Select range first (V)", Type: models.StatusWarning}
+		} else {
+			m.mode = models.ModeChart
+			m.chartType = 0
+		}
+		return m, nil
+
+	case key.Matches(msg, m.keys.SelectRange):
+		if !m.isSelecting {
+			m.selectStart = [2]int{m.cursorRow, m.cursorCol}
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.isSelecting = true
+			m.status = models.StatusMsg{Message: "Selection started - Move cursor, press V to finish", Type: models.StatusInfo}
+		} else {
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.status = models.StatusMsg{
+				Message: fmt.Sprintf("Selected %dx%d range - Press v to visualize", 
+					abs(m.selectEnd[0]-m.selectStart[0])+1,
+					abs(m.selectEnd[1]-m.selectStart[1])+1),
+				Type: models.StatusSuccess,
+			}
+		}
 		return m, nil
 	}
 
@@ -478,4 +508,72 @@ func (m *Model) exportSheet(filename string) {
 			Type:    models.StatusSuccess,
 		}
 	}
+}
+
+// updateChart handles chart visualization mode
+func (m Model) updateChart(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "esc", "q":
+		m.mode = models.ModeNormal
+	case "1":
+		m.chartType = 0 // Bar
+	case "2":
+		m.chartType = 1 // Line
+	case "3":
+		m.chartType = 2 // Sparkline
+	case "4":
+		m.chartType = 3 // Pie
+	}
+	return m, nil
+}
+
+// updateSelectRange handles range selection mode
+func (m Model) updateSelectRange(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	sheet := m.sheets[m.currentSheet]
+
+	switch {
+	case key.Matches(msg, m.keys.Up):
+		if m.cursorRow > 0 {
+			m.cursorRow--
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.adjustViewport()
+		}
+	case key.Matches(msg, m.keys.Down):
+		if m.cursorRow < sheet.MaxRows-1 {
+			m.cursorRow++
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.adjustViewport()
+		}
+	case key.Matches(msg, m.keys.Left):
+		if m.cursorCol > 0 {
+			m.cursorCol--
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.adjustViewport()
+		}
+	case key.Matches(msg, m.keys.Right):
+		if m.cursorCol < sheet.MaxCols-1 {
+			m.cursorCol++
+			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
+			m.adjustViewport()
+		}
+	case key.Matches(msg, m.keys.SelectRange):
+		m.mode = models.ModeNormal
+		m.status = models.StatusMsg{
+			Message: "Selected range - Press v to visualize",
+			Type:    models.StatusSuccess,
+		}
+	case msg.Type == tea.KeyEscape:
+		m.isSelecting = false
+		m.mode = models.ModeNormal
+		m.status = models.StatusMsg{Message: "Selection cancelled", Type: models.StatusInfo}
+	}
+
+	return m, nil
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
