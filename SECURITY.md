@@ -20,7 +20,7 @@ If you discover a security vulnerability, please follow these steps:
 
 ### DO
 
-1. Email details to: security@excel-tui.dev (or create a private security advisory on GitHub)
+1. Email details to: security@vex.dev (or create a private security advisory on GitHub)
 2. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -48,16 +48,19 @@ If you discover a security vulnerability, please follow these steps:
 ## Known Security Considerations
 
 ### File Parsing
+
 - Excel files can contain macros (not executed by this tool)
 - CSV files are parsed as text only
 - Formula evaluation is display-only, not executed
 
 ### Data Privacy
+
 - All processing happens locally
 - No data is sent to external servers
 - Clipboard access is used only when explicitly requested
 
 ### Dependencies
+
 - We regularly update dependencies
 - Security advisories are monitored
 - Dependency scanning is automated
@@ -83,6 +86,7 @@ When a security vulnerability is confirmed:
 ## Compliance
 
 This project follows:
+
 - OWASP guidelines for secure coding
 - Go security best practices
 - CWE/SANS Top 25 mitigation strategies
@@ -90,8 +94,9 @@ This project follows:
 ## Contact
 
 For security concerns, contact:
-- Email: security@excel-tui.dev
-- GitHub Security Advisory: [Create Advisory](https://github.com/excel-tui/excel-tui/security/advisories/new)
+
+- Email: security@vex-tui.dev
+- GitHub Security Advisory: [Create Advisory](https://github.com/CodeOne45/vex-tui/security/advisories/new)
 
 ---
 

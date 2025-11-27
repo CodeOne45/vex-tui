@@ -41,26 +41,25 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/excel-tui.git
-cd excel-tui
+git clone https://github.com/CodeOne45/vex-tui.git
+cd vex-tui
 
 # Add upstream remote
-git remote add upstream https://github.com/excel-tui/excel-tui.git
-
+git remote add upstream https://github.com/vex-tui/vex-tui.git
 # Install dependencies
 go mod download
 
 # Build
-go build -o excel-tui .
+go build -o vex-tui .
 
 # Run
-./excel-tui sample_data.csv
+./vex sample_data.csv
 ```
 
 ## Project Structure
 
 ```
-excel-tui/
+vex/
 ├── main.go                 # Entry point
 ├── internal/               # Private application code
 │   ├── app/               # Application logic
@@ -164,6 +163,7 @@ When adding new features:
 ## Questions?
 
 Feel free to:
+
 - Open an issue with your question
 - Join discussions in existing issues
 - Reach out to maintainers
@@ -171,6 +171,7 @@ Feel free to:
 ## Recognition
 
 Contributors will be:
+
 - Listed in the README
 - Mentioned in release notes
 - Credited in commit history

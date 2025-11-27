@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2025-02-01
 
 ### Added
+
 - Live ASCII charts (Bar, Line, Sparkline, Pie)
 - 'v' visualization window
 - Auto-scaling and grid-based rendering
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Themes & Visuals
+
 - Six professional themes (Catppuccin, Nord, Rosé Pine, Tokyo Night, Gruvbox, Dracula)
 - Theme switcher accessible with `t` key
 - CLI flag `--theme` for setting theme on launch
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic style system that updates on theme change
 
 #### Search & Navigation
+
 - Vim-style search bar at bottom of screen
 - Persistent search display with active query
 - Search highlighting with yellow background
@@ -36,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smart viewport scrolling
 
 #### Cell Operations
+
 - Cell detail modal (Enter key) showing:
   - Cell reference
   - Full value with text wrapping
@@ -46,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Formula display toggle
 
 #### UI Improvements
+
 - Formula bar showing current cell info
 - Enhanced status bar with position, mode, and search results
 - Compact help display
@@ -53,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time status messages for all operations
 
 #### Navigation Enhancements
+
 - `g` key - Jump to first column
 - `G` key - Jump to last column
 - `Ctrl+U` - Alternative Page Up
@@ -61,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `$` - Alternative End
 
 ### Changed
+
 - Complete code restructure following Go best practices
 - Modular architecture with clean separation of concerns
 - Improved error handling throughout
@@ -68,12 +75,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced performance for large files
 
 ### Fixed
+
 - Panic on startup with uninitialized terminal size
 - Negative viewport calculations
 - Empty cell handling
 - Memory leaks with file operations
 
 ### Security
+
 - Added input validation and sanitization
 - Safe file handling with proper cleanup
 - No code execution from formulas
@@ -82,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2025-01-26
 
 ### Added
+
 - Initial release
 - Multi-format support (.xlsx, .xlsm, .xls, .csv)
 - Basic TUI with Bubble Tea framework
@@ -92,4 +102,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vim-style navigation
 - Multiple sheet support
 
-[1.0.0]: https://github.com/excel-tui/excel-tui/releases/tag/v1.0.0
+[1.0.0]: https://github.com/vex-tui/vex/releases/tag/v1.0.0

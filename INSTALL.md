@@ -22,12 +22,12 @@ This document provides detailed installation instructions for Excel TUI on vario
 ### Using go install
 
 ```bash
-go install github.com/excel-tui@latest
+go install github.com/CodeOne45/vex-tui@latest
 ```
 
 ### Download Pre-built Binaries
 
-1. Visit the [releases page](https://github.com/excel-tui/excel-tui/releases)
+1. Visit the [releases page](https://github.com/CodeOne45/vex-tui/releases)
 2. Download the appropriate binary for your platform
 3. Extract and move to your PATH
 
@@ -39,26 +39,26 @@ go install github.com/excel-tui@latest
 
 ```bash
 # Coming soon
-brew install excel-tui
+brew install vex
 ```
 
 #### Manual Installation
 
 ```bash
 # Download latest release
-curl -L https://github.com/excel-tui/excel-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o excel-tui.tar.gz
+curl -L https://github.com/CodeOne45/vex-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o vex-tui.tar.gz
 
 # Extract
-tar xzf excel-tui.tar.gz
+tar xzf vex.tar.gz
 
 # Make executable
 chmod +x vexdarwin-arm64
 
 # Move to PATH
-sudo mv vexdarwin-arm64 /usr/local/bin/excel-tui
+sudo mv vexdarwin-arm64 /usr/local/bin/vex
 
 # Verify
-excel-tui --version
+vex --version
 ```
 
 **Note**: On macOS, you may need to allow the app in System Preferences → Security & Privacy
@@ -69,20 +69,20 @@ excel-tui --version
 
 ```bash
 # Debian/Ubuntu (Coming soon)
-sudo apt install excel-tui
+sudo apt install vex
 
 # Arch Linux (Coming soon)
-yay -S excel-tui
+yay -S vex
 
 # Fedora (Coming soon)
-sudo dnf install excel-tui
+sudo dnf install vex
 ```
 
 #### Manual Installation
 
 ```bash
 # Download latest release
-wget https://github.com/excel-tui/excel-tui/releases/latest/download/vexlinux-amd64.tar.gz
+wget https://github.com/CodeOne45/vex-tui/releases/latest/download/vexlinux-amd64.tar.gz
 
 # Extract
 tar xzf vexlinux-amd64.tar.gz
@@ -91,7 +91,7 @@ tar xzf vexlinux-amd64.tar.gz
 chmod +x vexlinux-amd64
 
 # Move to PATH
-sudo mv vexlinux-amd64 /usr/local/bin/excel-tui
+sudo mv vexlinux-amd64 /usr/local/bin/vex
 
 # Install clipboard utilities
 sudo apt-get install xclip  # Ubuntu/Debian
@@ -101,7 +101,7 @@ sudo pacman -S xclip        # Arch
 sudo dnf install xclip      # Fedora
 
 # Verify
-excel-tui --version
+vex --version
 ```
 
 ### Windows
@@ -109,24 +109,24 @@ excel-tui --version
 #### Using Chocolatey (Coming soon)
 
 ```powershell
-choco install excel-tui
+choco install vex
 ```
 
 #### Using Scoop (Coming soon)
 
 ```powershell
-scoop install excel-tui
+scoop install vex
 ```
 
 #### Manual Installation
 
-1. Download `vexwindows-amd64.zip` from [releases](https://github.com/excel-tui/excel-tui/releases/latest)
+1. Download `vexwindows-amd64.zip` from [releases](https://github.com/CodeOne45/vex-tui/releases/latest)
 2. Extract the ZIP file
 3. Add the directory to your PATH:
    - Right-click "This PC" → Properties
    - Advanced system settings → Environment Variables
    - Edit PATH and add the directory
-4. Open a new terminal and verify: `excel-tui --version`
+4. Open a new terminal and verify: `vex --version`
 
 **Recommended Terminal**: Windows Terminal for best experience
 
@@ -146,14 +146,14 @@ go version
 
 ```bash
 # Clone the repository
-git clone https://github.com/excel-tui/excel-tui.git
-cd excel-tui
+git clone https://github.com/CodeOne45/vex-tui.git
+cd vex
 
 # Install dependencies
 go mod download
 
 # Build
-go build -o excel-tui .
+go build -o vex .
 
 # Or use Make
 make build
@@ -166,7 +166,7 @@ make install
 
 ```bash
 # Build with race detector
-go build -race -o excel-tui .
+go build -race -o vex .
 
 # Run tests
 make test
@@ -181,32 +181,32 @@ After installation, verify it works:
 
 ```bash
 # Check version
-excel-tui --version
+vex --version
 
 # Run with sample data
-excel-tui sample_data.csv
+vex sample_data.csv
 
 # Test with a theme
-excel-tui sample_data.csv --theme nord
+vex sample_data.csv --theme nord
 ```
 
 ## Troubleshooting
 
 ### "command not found"
 
-**Problem**: Shell can't find the `excel-tui` command
+**Problem**: Shell can't find the `vex` command
 
 **Solution**:
 
 ```bash
 # Check if binary is in PATH
-which excel-tui
+which vex
 
 # If not found, add to PATH
-export PATH="$PATH:/path/to/excel-tui"
+export PATH="$PATH:/path/to/vex"
 
 # Make permanent (add to ~/.bashrc or ~/.zshrc)
-echo 'export PATH="$PATH:/path/to/excel-tui"' >> ~/.bashrc
+echo 'export PATH="$PATH:/path/to/vex"' >> ~/.bashrc
 ```
 
 ### Clipboard Not Working (Linux)
@@ -248,7 +248,7 @@ echo 'export TERM=xterm-256color' >> ~/.bashrc
 
 ```bash
 # Remove quarantine attribute
-xattr -d com.apple.quarantine /path/to/excel-tui
+xattr -d com.apple.quarantine /path/to/vex
 
 # Or allow in System Preferences
 # System Preferences → Security & Privacy → General
@@ -284,33 +284,33 @@ go build .
 ### If installed via go install
 
 ```bash
-rm $(which excel-tui)
+rm $(which vex)
 ```
 
 ### If installed manually
 
 ```bash
 # Remove binary
-sudo rm /usr/local/bin/excel-tui
+sudo rm /usr/local/bin/vex
 
 # Remove config (if any)
-rm -rf ~/.config/excel-tui
+rm -rf ~/.config/vex
 ```
 
 ### If installed via package manager
 
 ```bash
 # macOS
-brew uninstall excel-tui
+brew uninstall vex
 
 # Linux
-sudo apt remove excel-tui     # Debian/Ubuntu
-yay -R excel-tui              # Arch
-sudo dnf remove excel-tui     # Fedora
+sudo apt remove vex     # Debian/Ubuntu
+yay -R vex              # Arch
+sudo dnf remove vex     # Fedora
 
 # Windows
-choco uninstall excel-tui     # Chocolatey
-scoop uninstall excel-tui     # Scoop
+choco uninstall vex     # Chocolatey
+scoop uninstall vex     # Scoop
 ```
 
 ## Next Steps
@@ -319,13 +319,13 @@ After successful installation:
 
 1. Read the [README](README.md) for feature overview
 2. Check [CONTRIBUTING](CONTRIBUTING.md) if you want to contribute
-3. Report issues on [GitHub](https://github.com/excel-tui/excel-tui/issues)
+3. Report issues on [GitHub](https://github.com/CodeOne45/vex-tui/issues)
 
 ## Support
 
 If you encounter issues not covered here:
 
-- Check [existing issues](https://github.com/excel-tui/excel-tui/issues)
+- Check [existing issues](https://github.com/CodeOne45/vex-tui/issues)
 - Create a new issue with:
   - Your OS and version
   - Go version (if building from source)

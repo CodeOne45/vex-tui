@@ -4,11 +4,12 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/excel-tui/releases)
+[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
 
 ## ✨ Features
 
 ### 🎨 Six Beautiful Themes
+
 - **Catppuccin Mocha** - Soft pastels, perfect for all-day use
 - **Nord** - Cool Arctic blues, minimal and focused
 - **Rosé Pine** - Elegant rose tones, sophisticated
@@ -17,6 +18,7 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 - **Dracula** - Classic high contrast theme
 
 ### 🔍 Powerful Navigation
+
 - Vim-style keybindings (hjkl) and arrow keys
 - Jump to any cell (Ctrl+G) with multiple format support
 - Page Up/Down, Home/End
@@ -24,12 +26,14 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 - Navigate search results (n/N)
 
 ### 📋 Data Operations
+
 - Copy cell (c) or entire row (C)
 - Export to CSV or JSON
 - Toggle formula display (f)
 - View detailed cell information (Enter)
 
 ### 📑 File Support
+
 - Excel files (.xlsx, .xlsm, .xls)
 - CSV files
 - Multiple sheets with Tab navigation
@@ -41,21 +45,21 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 ### Using go install
 
 ```bash
-go install github.com/excel-tui@latest
+go install github.com/CodeOne45/vex-tui@latest
 ```
 
 ### Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/excel-tui/excel-tui.git
-cd excel-tui
+git clone https://github.com/CodeOne45/vex-tui.git
+cd vex-tui
 
 # Install dependencies
 go mod download
 
 # Build
-go build -o excel-tui .
+go build -o vex .
 
 # Optional: Install globally
 go install
@@ -63,24 +67,25 @@ go install
 
 ### Download Binary
 
-Download pre-built binaries from the [releases page](https://github.com/excel-tui/releases).
+Download pre-built binaries from the [releases page](https://github.com/vex/releases).
 
 ## 📖 Usage
 
 ```bash
 # Basic usage
-excel-tui data.xlsx
+vex data.xlsx
 
 # With a specific theme
-excel-tui report.csv --theme nord
+vex report.csv --theme nord
 
 # Short flag
-excel-tui sales.xlsx -t tokyo-night
+vex sales.xlsx -t tokyo-night
 ```
 
 ## ⌨️ Keyboard Shortcuts
 
 ### Navigation
+
 - `↑↓←→` or `hjkl` - Navigate cells
 - `Page Up/Down` - Scroll by page
 - `Ctrl+U/D` - Alternative page scroll
@@ -89,6 +94,7 @@ excel-tui sales.xlsx -t tokyo-night
 - `Tab/Shift+Tab` - Next/previous sheet
 
 ### Search & Actions
+
 - `/` - Search (vim-style)
 - `n/N` - Next/previous result
 - `Ctrl+G` - Jump to cell
@@ -104,7 +110,7 @@ excel-tui sales.xlsx -t tokyo-night
 ## 🏗️ Project Structure
 
 ```
-excel-tui/
+vex-tui/
 ├── main.go                 # Application entry point
 ├── internal/
 │   ├── app/               # Application logic
@@ -131,8 +137,8 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ```bash
 # Clone the repository
-git clone https://github.com/excel-tui/excel-tui.git
-cd excel-tui
+git clone https://github.com/CodeOne45/vex-tui.git
+cd vex
 
 # Install dependencies
 go mod download
@@ -141,12 +147,13 @@ go mod download
 go test ./...
 
 # Build
-go build -o excel-tui .
+go build -o vex .
 ```
 
 ### Code Style
 
 This project follows standard Go conventions:
+
 - Run `go fmt` before committing
 - Follow [Effective Go](https://golang.org/doc/effective_go.html) guidelines
 - Write clear commit messages
@@ -167,12 +174,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔒 Security
 
-If you discover a security vulnerability, please send an email to [security@excel-tui.dev](mailto:security@excel-tui.dev). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability, please send an email to [security@vex-tui.dev](mailto:security@vex-tui.dev). All security vulnerabilities will be promptly addressed.
 
 ## 📮 Contact
 
-- GitHub: [@excel-tui](https://github.com/excel-tui)
-- Issues: [GitHub Issues](https://github.com/excel-tui/excel-tui/issues)
+- GitHub: [@vex-tui](https://github.com/CodeOne45/vex-tui)
+- Issues: [GitHub Issues](https://github.com/CodeOne45/vex-tui/issues)
 
 ---
 
