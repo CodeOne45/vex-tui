@@ -6,6 +6,9 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
 
+![Vex Demo](assets/vex-demo.gif)
+
+
 ## ✨ Features
 
 ### 🎨 Six Beautiful Themes
