@@ -2,9 +2,9 @@
 
 A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built with Go.
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
 
 ## ✨ Features
 
@@ -31,6 +31,13 @@ A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built wi
 - Export to CSV or JSON
 - Toggle formula display (f)
 - View detailed cell information (Enter)
+
+### 📊 Live Data Visualization
+
+- Bar charts
+- Line charts
+- Sparklines
+- Pie charts
 
 ### 📑 File Support
 
@@ -106,6 +113,25 @@ vex sales.xlsx -t tokyo-night
 - `t` - Theme selector
 - `?` - Toggle help
 - `q` or `Ctrl+C` - Quit
+
+### Data Visualization
+
+Step 1: Select Data Range
+
+1. Navigate to your data
+2. Press 'V' (shift+v) to start selection
+3. Move cursor to select range (arrows/hjkl)
+4. Press 'V' again to finish selection
+
+Step 2: Visualize
+
+1. Press 'v' (lowercase) to open visualization
+2. Press 1-4 to switch between chart types:
+   - 1: Bar Chart
+   - 2: Line Chart
+   - 3: Sparkline
+   - 4: Pie Chart
+3. Press Esc to close
 
 ## 🏗️ Project Structure
 
