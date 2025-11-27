@@ -46,16 +46,16 @@ brew install excel-tui
 
 ```bash
 # Download latest release
-curl -L https://github.com/excel-tui/excel-tui/releases/latest/download/excel-tui-darwin-arm64.tar.gz -o excel-tui.tar.gz
+curl -L https://github.com/excel-tui/excel-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o excel-tui.tar.gz
 
 # Extract
 tar xzf excel-tui.tar.gz
 
 # Make executable
-chmod +x excel-tui-darwin-arm64
+chmod +x vexdarwin-arm64
 
 # Move to PATH
-sudo mv excel-tui-darwin-arm64 /usr/local/bin/excel-tui
+sudo mv vexdarwin-arm64 /usr/local/bin/excel-tui
 
 # Verify
 excel-tui --version
@@ -82,16 +82,16 @@ sudo dnf install excel-tui
 
 ```bash
 # Download latest release
-wget https://github.com/excel-tui/excel-tui/releases/latest/download/excel-tui-linux-amd64.tar.gz
+wget https://github.com/excel-tui/excel-tui/releases/latest/download/vexlinux-amd64.tar.gz
 
 # Extract
-tar xzf excel-tui-linux-amd64.tar.gz
+tar xzf vexlinux-amd64.tar.gz
 
 # Make executable
-chmod +x excel-tui-linux-amd64
+chmod +x vexlinux-amd64
 
 # Move to PATH
-sudo mv excel-tui-linux-amd64 /usr/local/bin/excel-tui
+sudo mv vexlinux-amd64 /usr/local/bin/excel-tui
 
 # Install clipboard utilities
 sudo apt-get install xclip  # Ubuntu/Debian
@@ -120,7 +120,7 @@ scoop install excel-tui
 
 #### Manual Installation
 
-1. Download `excel-tui-windows-amd64.zip` from [releases](https://github.com/excel-tui/excel-tui/releases/latest)
+1. Download `vexwindows-amd64.zip` from [releases](https://github.com/excel-tui/excel-tui/releases/latest)
 2. Extract the ZIP file
 3. Add the directory to your PATH:
    - Right-click "This PC" → Properties
@@ -197,6 +197,7 @@ excel-tui sample_data.csv --theme nord
 **Problem**: Shell can't find the `excel-tui` command
 
 **Solution**:
+
 ```bash
 # Check if binary is in PATH
 which excel-tui
@@ -213,6 +214,7 @@ echo 'export PATH="$PATH:/path/to/excel-tui"' >> ~/.bashrc
 **Problem**: Copy operations don't work
 
 **Solution**:
+
 ```bash
 # Install clipboard utilities
 sudo apt-get install xclip xsel  # Ubuntu/Debian
@@ -225,6 +227,7 @@ sudo dnf install xclip xsel      # Fedora
 **Problem**: Terminal shows wrong colors or no colors
 
 **Solution**:
+
 ```bash
 # Check TERM variable
 echo $TERM
@@ -242,6 +245,7 @@ echo 'export TERM=xterm-256color' >> ~/.bashrc
 **Problem**: macOS blocks execution of downloaded binary
 
 **Solution**:
+
 ```bash
 # Remove quarantine attribute
 xattr -d com.apple.quarantine /path/to/excel-tui
@@ -255,6 +259,7 @@ xattr -d com.apple.quarantine /path/to/excel-tui
 **Problem**: Build errors or dependency issues
 
 **Solution**:
+
 ```bash
 # Clean and retry
 go clean -cache -modcache
@@ -268,6 +273,7 @@ go build .
 **Problem**: Excel files with 50k+ rows are slow
 
 **Solution**:
+
 - This is expected for very large files
 - The app uses lazy loading for optimal performance
 - Consider filtering/splitting the data beforehand
