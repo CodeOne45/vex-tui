@@ -26,6 +26,8 @@ const (
 	ModeJump
 	ModeExport
 	ModeTheme
+	ModeChart
+	ModeSelectRange
 )
 
 // StatusMsg represents a status message with type

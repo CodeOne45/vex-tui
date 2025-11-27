@@ -29,6 +29,8 @@ type KeyMap struct {
 	Theme       key.Binding
 	Help        key.Binding
 	Quit        key.Binding
+	Visualize   key.Binding
+	SelectRange key.Binding
 }
 
 // ShortHelp returns key bindings to be shown in the mini help view
@@ -45,7 +47,7 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 		{k.Search, k.NextResult, k.PrevResult, k.ClearSearch},
 		{k.Detail, k.Jump, k.ToggleForm},
 		{k.Copy, k.CopyRow, k.Export, k.Theme},
-		{k.Help, k.Quit},
+		{k.Visualize, k.SelectRange, k.Help, k.Quit},
 	}
 }
 
@@ -77,5 +79,7 @@ func DefaultKeyMap() KeyMap {
 		Theme:       key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "theme")),
 		Help:        key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "help")),
 		Quit:        key.NewBinding(key.WithKeys("q", "ctrl+c"), key.WithHelp("q", "quit")),
+		Visualize:   key.NewBinding(key.WithKeys("v"), key.WithHelp("v", "visualize")),
+		SelectRange: key.NewBinding(key.WithKeys("V"), key.WithHelp("V", "select")),
 	}
 }
