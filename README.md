@@ -1,4 +1,4 @@
-# 📊 Excel TUI v2.0
+# 📊 Vex - Excel Viewer
 
 A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built with Go.
 
