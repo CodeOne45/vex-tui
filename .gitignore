@@ -19,6 +19,7 @@ go.work
 
 # Binary
 vex
+vex-tui
 
 # IDE
 .vscode/
@@ -34,6 +35,8 @@ Thumbs.db
 # Build artifacts
 dist/
 build/
+.gocache/
+.gopath/
 
 # Test files
 *.csv

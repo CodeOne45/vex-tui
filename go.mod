@@ -1,4 +1,4 @@
-module github.com/odesaur/vex-tui
+module github.com/odesaur/vex-tui/v2
 
 go 1.25
 
