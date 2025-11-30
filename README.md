@@ -11,10 +11,10 @@ A TUI Excel and CSV viewer in Go
 
 ## Installation
 
-### Using go install (quickest)
+### Using go install
 
 ```bash
-go install github.com/odesaur/vex-tui@latest
+GOPROXY=direct go install github.com/odesaur/vex-tui@latest
 ```
 
 ### From source
