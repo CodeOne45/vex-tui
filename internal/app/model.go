@@ -1,8 +1,12 @@
 package app
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/odesaur/vex-tui/internal/loader"
 	"github.com/odesaur/vex-tui/internal/theme"
 	"github.com/odesaur/vex-tui/internal/ui"
 	"github.com/odesaur/vex-tui/pkg/models"
@@ -19,6 +23,10 @@ type Model struct {
 	width         int
 	height        int
 	mode          models.Mode
+	files         []string
+	filteredFiles []string
+	fileIndex     int
+	fileFilter    textinput.Model
 	searchInput   textinput.Model
 	jumpInput     textinput.Model
 	exportInput   textinput.Model
@@ -53,6 +61,11 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	styles := ui.InitStyles()
 
 	// Create input fields
+	fileFilter := textinput.New()
+	fileFilter.Placeholder = "Filter files..."
+	fileFilter.CharLimit = 200
+	fileFilter.Width = 50
+
 	searchInput := textinput.New()
 	searchInput.Placeholder = "search..."
 	searchInput.CharLimit = 100
@@ -68,9 +81,10 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	exportInput.CharLimit = 100
 	exportInput.Width = 40
 
-	return Model{
+	model := Model{
 		sheets:       sheets,
 		currentSheet: 0,
+		fileFilter:   fileFilter,
 		searchInput:  searchInput,
 		jumpInput:    jumpInput,
 		exportInput:  exportInput,
@@ -85,6 +99,17 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 			Type:    models.StatusInfo,
 		},
 	}
+
+	if filename == "" || len(sheets) == 0 {
+		model.mode = models.ModeFilePicker
+		model.status = models.StatusMsg{Message: "Select a file to open", Type: models.StatusInfo}
+		model.fileFilter.Focus()
+		model.initFilePicker()
+	} else {
+		model.mode = models.ModeNormal
+	}
+
+	return model
 }
 
 // GetThemeNames returns available theme names
@@ -98,6 +123,29 @@ func (m *Model) resetView() {
 	m.cursorCol = 0
 	m.offsetRow = 0
 	m.offsetCol = 0
+}
+
+// filterFiles filters the file list based on the current filter value.
+func (m *Model) filterFiles() {
+	query := strings.ToLower(strings.TrimSpace(m.fileFilter.Value()))
+	if query == "" {
+		m.filteredFiles = m.files
+		if m.fileIndex >= len(m.filteredFiles) {
+			m.fileIndex = 0
+		}
+		return
+	}
+
+	filtered := make([]string, 0, len(m.files))
+	for _, f := range m.files {
+		if strings.Contains(strings.ToLower(f), query) {
+			filtered = append(filtered, f)
+		}
+	}
+	m.filteredFiles = filtered
+	if m.fileIndex >= len(m.filteredFiles) {
+		m.fileIndex = 0
+	}
 }
 
 // adjustViewport adjusts the viewport to keep cursor visible
@@ -152,5 +200,54 @@ func (m *Model) applyTheme(name string) {
 			Message: "Theme: " + theme.GetCurrentTheme().Name,
 			Type:    models.StatusSuccess,
 		}
+	}
+}
+
+// initFilePicker loads supported files from the current directory.
+func (m *Model) initFilePicker() {
+	files, err := loader.DiscoverFiles(".", 400)
+	if err != nil {
+		m.status = models.StatusMsg{
+			Message: fmt.Sprintf("File scan failed: %v", err),
+			Type:    models.StatusError,
+		}
+		return
+	}
+	m.files = files
+	m.filteredFiles = files
+	m.fileIndex = 0
+}
+
+// applyFileSelection loads the selected file and switches to normal mode.
+func (m *Model) applyFileSelection(path string) {
+	sheets, err := loader.LoadFile(path)
+	if err != nil {
+		m.status = models.StatusMsg{
+			Message: fmt.Sprintf("Load failed: %v", err),
+			Type:    models.StatusError,
+		}
+		return
+	}
+	if len(sheets) == 0 {
+		m.status = models.StatusMsg{
+			Message: "No sheets found in file",
+			Type:    models.StatusError,
+		}
+		return
+	}
+
+	m.sheets = sheets
+	m.filename = path
+	m.currentSheet = 0
+	m.cursorRow, m.cursorCol = 0, 0
+	m.offsetRow, m.offsetCol = 0, 0
+	m.searchResults = nil
+	m.searchQuery = ""
+	m.searchIndex = 0
+	m.fileFilter.Blur()
+	m.mode = models.ModeNormal
+	m.status = models.StatusMsg{
+		Message: "Ready | " + theme.GetCurrentTheme().Name,
+		Type:    models.StatusSuccess,
 	}
 }

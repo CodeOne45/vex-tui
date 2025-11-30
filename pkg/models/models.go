@@ -21,6 +21,7 @@ type Mode int
 
 const (
 	ModeNormal Mode = iota
+	ModeFilePicker
 	ModeSearch
 	ModeDetail
 	ModeJump

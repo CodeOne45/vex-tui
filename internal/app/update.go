@@ -30,6 +30,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch m.mode {
+		case models.ModeFilePicker:
+			return m.updateFilePicker(msg)
 		case models.ModeSearch:
 			return m.updateSearch(msg)
 		case models.ModeDetail:
@@ -360,6 +362,36 @@ func (m Model) updateTheme(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	}
 	return m, nil
+}
+
+// updateFilePicker handles file picker interactions
+func (m Model) updateFilePicker(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
+	// Update filter input first to capture typing
+	m.fileFilter, cmd = m.fileFilter.Update(msg)
+
+	switch msg.String() {
+	case "ctrl+c", "q":
+		return m, tea.Quit
+	case "enter":
+		if len(m.filteredFiles) == 0 {
+			return m, nil
+		}
+		m.applyFileSelection(m.filteredFiles[m.fileIndex])
+		return m, nil
+	case "up", "k":
+		if m.fileIndex > 0 {
+			m.fileIndex--
+		}
+	case "down", "j":
+		if m.fileIndex < len(m.filteredFiles)-1 {
+			m.fileIndex++
+		}
+	}
+
+	m.filterFiles()
+	return m, cmd
 }
 
 // jumpToSearchResult jumps to the current search result

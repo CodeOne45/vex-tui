@@ -26,6 +26,47 @@ func LoadFile(filename string) ([]models.Sheet, error) {
 	}
 }
 
+// DiscoverFiles walks the given directory and returns supported spreadsheet files.
+// max controls the maximum number of files returned to keep the picker responsive.
+func DiscoverFiles(root string, max int) ([]string, error) {
+	files := make([]string, 0, max)
+
+	exts := map[string]bool{
+		".xlsx": true,
+		".xlsm": true,
+		".xls":  true,
+		".csv":  true,
+	}
+
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			// Skip hidden directories like .git
+			if strings.HasPrefix(d.Name(), ".") && path != root {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		ext := strings.ToLower(filepath.Ext(d.Name()))
+		if exts[ext] {
+			files = append(files, path)
+			if len(files) >= max {
+				return filepath.SkipDir
+			}
+		}
+		return nil
+	})
+
+	if err != nil && err != filepath.SkipDir {
+		return nil, err
+	}
+
+	return files, nil
+}
+
 // loadExcel loads an Excel file
 func loadExcel(filename string) ([]models.Sheet, error) {
 	f, err := excelize.OpenFile(filename)

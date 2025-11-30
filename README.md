@@ -17,8 +17,6 @@ A TUI Excel and CSV viewer in Go
 go install github.com/odesaur/vex-tui@latest
 ```
 
-This places the `vex-tui` binary in `$(go env GOPATH)/bin` (or `$(go env GOBIN)` if set). Ensure that directory is on your `PATH`.
-
 ### From source
 
 ```bash
@@ -41,13 +39,14 @@ cd vex-tui
 make install
 ```
 
-`make install` will produce an optimized build and install it to your Go bin directory so you can run `vex-tui` from anywhere.
-
 ## Usage
 
 ```bash
-# Basic usage
+# Basic usage (opens file directly)
 vex-tui data.xlsx
+
+# Start with a picker in the current directory
+vex-tui
 
 # With a specific theme
 vex-tui report.csv --theme nord
@@ -73,30 +72,6 @@ Press `?` in the app anytime to open the built-in help with the full list. Quick
 | `e`                    | Export sheet                  |
 | `t`                    | Theme selector                |
 | `q` or `Ctrl+C`        | Quit                          |
-
-Data visualization:
-
-1) Select range with `V` (start/finish selection)  
-2) Open charts with `v` and pick `1-4` (bar, line, sparkline, pie)  
-3) `Esc` to close
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/odesaur/vex-tui.git
-cd vex-tui
-
-# Install dependencies
-go mod download
-
-# Run tests
-go test ./...
-
-# Build
-go build -o vex-tui .
-```
-
 
 ## Acknowledgments
 

@@ -20,6 +20,10 @@ func (m Model) View() string {
 		return "Initializing..."
 	}
 
+	if m.mode == models.ModeFilePicker {
+		return ui.RenderModal(m.width, m.height, m.renderFilePicker())
+	}
+
 	if len(m.sheets) == 0 {
 		return m.renderEmpty()
 	}
@@ -40,6 +44,53 @@ func (m Model) View() string {
 	default:
 		return m.renderNormal()
 	}
+}
+
+// renderFilePicker renders the file picker modal
+func (m Model) renderFilePicker() string {
+	t := theme.GetCurrentTheme()
+
+	var b strings.Builder
+	b.WriteString(m.styles.ModalTitle.Render("Select a file in this directory"))
+	b.WriteString("\n\n")
+	b.WriteString(m.styles.ModalKey.Render("Filter:"))
+	b.WriteString("\n")
+	b.WriteString(m.fileFilter.View())
+	b.WriteString("\n\n")
+
+	if len(m.filteredFiles) == 0 {
+		b.WriteString(lipgloss.NewStyle().Foreground(t.DimText).Render("No matching files (.csv, .xlsx, .xlsm, .xls)"))
+		return m.styles.Modal.Width(80).Render(b.String())
+	}
+
+	maxRows := ui.Max(5, ui.Min(len(m.filteredFiles), 12))
+	for i := 0; i < maxRows; i++ {
+		if i >= len(m.filteredFiles) {
+			break
+		}
+		path := m.filteredFiles[i]
+		name := filepath.Base(path)
+		line := name
+		if dir := filepath.Dir(path); dir != "." {
+			line = name + "  " + lipgloss.NewStyle().Foreground(t.DimText).Render(dir)
+		}
+
+		pointer := "  "
+		rowStyle := lipgloss.NewStyle().Foreground(t.Text)
+		if i == m.fileIndex {
+			pointer = "> "
+			rowStyle = rowStyle.Foreground(t.Accent)
+		}
+
+		b.WriteString(pointer + rowStyle.Render(line))
+		b.WriteString("\n")
+	}
+
+	b.WriteString("\n")
+	b.WriteString(lipgloss.NewStyle().Foreground(t.DimText).Italic(true).
+		Render("Use j/k or arrows to move, Enter to open, Esc to quit"))
+
+	return m.styles.Modal.Width(80).Render(b.String())
 }
 
 // renderEmpty renders the empty state
