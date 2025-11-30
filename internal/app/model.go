@@ -6,10 +6,10 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/odesaur/vex-tui/v2/internal/loader"
-	"github.com/odesaur/vex-tui/v2/internal/theme"
-	"github.com/odesaur/vex-tui/v2/internal/ui"
-	"github.com/odesaur/vex-tui/v2/pkg/models"
+	"github.com/odesaur/vex-tui/internal/loader"
+	"github.com/odesaur/vex-tui/internal/theme"
+	"github.com/odesaur/vex-tui/internal/ui"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 // Model represents the application state

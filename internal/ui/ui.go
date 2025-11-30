@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/odesaur/vex-tui/v2/internal/theme"
-	"github.com/odesaur/vex-tui/v2/pkg/models"
+	"github.com/odesaur/vex-tui/internal/theme"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 const (

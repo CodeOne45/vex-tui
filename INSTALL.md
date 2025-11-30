@@ -22,7 +22,7 @@ This document provides detailed installation instructions for Excel TUI on vario
 ### Using go install
 
 ```bash
-go install github.com/odesaur/vex-tui/v2@latest
+go install github.com/odesaur/vex-tui@latest
 ```
 
 ### Download Pre-built Binaries

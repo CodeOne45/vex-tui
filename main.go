@@ -5,9 +5,9 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/odesaur/vex-tui/v2/internal/app"
-	"github.com/odesaur/vex-tui/v2/internal/loader"
-	"github.com/odesaur/vex-tui/v2/pkg/models"
+	"github.com/odesaur/vex-tui/internal/app"
+	"github.com/odesaur/vex-tui/internal/loader"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 var version = "2.0.0"

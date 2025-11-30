@@ -9,9 +9,9 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/odesaur/vex-tui/v2/internal/loader"
-	"github.com/odesaur/vex-tui/v2/internal/ui"
-	"github.com/odesaur/vex-tui/v2/pkg/models"
+	"github.com/odesaur/vex-tui/internal/loader"
+	"github.com/odesaur/vex-tui/internal/ui"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 // Init initializes the model
