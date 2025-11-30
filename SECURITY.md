@@ -96,7 +96,7 @@ This project follows:
 For security concerns, contact:
 
 - Email: security@vex-tui.dev
-- GitHub Security Advisory: [Create Advisory](https://github.com/CodeOne45/vex-tui/security/advisories/new)
+- GitHub Security Advisory: [Create Advisory](https://github.com/odesaur/vex-tui/security/advisories/new)
 
 ---
 

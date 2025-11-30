@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/pkg/models"
 	"github.com/xuri/excelize/v2"
 )
 

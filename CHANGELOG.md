@@ -102,4 +102,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vim-style navigation
 - Multiple sheet support
 
-[1.0.0]: https://github.com/vex-tui/vex/releases/tag/v1.0.0
+[1.0.0]: https://github.com/odesaur/vex-tui/releases/tag/v1.0.0

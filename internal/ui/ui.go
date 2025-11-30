@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/vex/internal/theme"
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/internal/theme"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 const (
@@ -16,27 +16,27 @@ const (
 
 // Styles holds all lipgloss styles for the UI
 type Styles struct {
-	Title                lipgloss.Style
-	Header               lipgloss.Style
-	HeaderHighlight      lipgloss.Style
-	Cell                 lipgloss.Style
-	SelectedCell         lipgloss.Style
-	RowHighlight         lipgloss.Style
-	ColHighlight         lipgloss.Style
-	SearchMatch          lipgloss.Style
-	RowNum               lipgloss.Style
-	SelectedRowNum       lipgloss.Style
-	StatusBar            lipgloss.Style
-	SearchBar            lipgloss.Style
-	SearchPrompt         lipgloss.Style
-	Modal                lipgloss.Style
-	ModalTitle           lipgloss.Style
-	ModalContent         lipgloss.Style
-	ModalKey             lipgloss.Style
-	ModalValue           lipgloss.Style
-	Help                 lipgloss.Style
-	FormulaBar           lipgloss.Style
-	Separator            lipgloss.Style
+	Title           lipgloss.Style
+	Header          lipgloss.Style
+	HeaderHighlight lipgloss.Style
+	Cell            lipgloss.Style
+	SelectedCell    lipgloss.Style
+	RowHighlight    lipgloss.Style
+	ColHighlight    lipgloss.Style
+	SearchMatch     lipgloss.Style
+	RowNum          lipgloss.Style
+	SelectedRowNum  lipgloss.Style
+	StatusBar       lipgloss.Style
+	SearchBar       lipgloss.Style
+	SearchPrompt    lipgloss.Style
+	Modal           lipgloss.Style
+	ModalTitle      lipgloss.Style
+	ModalContent    lipgloss.Style
+	ModalKey        lipgloss.Style
+	ModalValue      lipgloss.Style
+	Help            lipgloss.Style
+	FormulaBar      lipgloss.Style
+	Separator       lipgloss.Style
 }
 
 // InitStyles creates and returns styles based on current theme

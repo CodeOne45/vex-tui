@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 const (

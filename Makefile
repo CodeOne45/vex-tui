@@ -1,20 +1,21 @@
 .PHONY: build run clean install test lint fmt help release
 
 BINARY_NAME=vex
-VERSION=1.0.0
+VERSION ?= 2.0.0
 BUILD_DIR=dist
 GO_FILES=$(shell find . -name '*.go' -type f)
+LDFLAGS=-s -w -X main.version=$(VERSION)
 
 # Build the application
 build:
 	@echo "Building $(BINARY_NAME) v$(VERSION)..."
-	@go build -ldflags="-s -w -X main.version=$(VERSION)" -o $(BINARY_NAME) .
+	@go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) .
 	@echo "Build complete!"
 
 # Build optimized release binary
 build-release:
 	@echo "Building optimized release..."
-	@go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BINARY_NAME) .
+	@go build -ldflags="$(LDFLAGS)" -trimpath -o $(BINARY_NAME) .
 	@echo "Release build complete!"
 
 # Run with sample data
@@ -64,18 +65,18 @@ clean:
 # Install globally
 install: build-release
 	@echo "Installing $(BINARY_NAME)..."
-	@go install
+	@go install -ldflags="$(LDFLAGS)" ./...
 	@echo "Installed! Run '$(BINARY_NAME)' from anywhere"
 
 # Create release builds for all platforms
 release: clean
 	@echo "Creating release builds v$(VERSION)..."
 	@mkdir -p $(BUILD_DIR)
-	@GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-amd64 .
-	@GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 .
-	@GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-linux-amd64 .
-	@GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 .
-	@GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe .
+	@GOOS=darwin GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-amd64 .
+	@GOOS=darwin GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 .
+	@GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-linux-amd64 .
+	@GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 .
+	@GOOS=windows GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe .
 	@cd $(BUILD_DIR) && sha256sum * > checksums.txt
 	@echo "Release builds created in $(BUILD_DIR)/"
 

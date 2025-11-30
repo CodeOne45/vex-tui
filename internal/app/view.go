@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/vex/internal/theme"
-	"github.com/vex/internal/ui"
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/internal/theme"
+	"github.com/odesaur/vex-tui/internal/ui"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 // View renders the current state
@@ -382,9 +382,9 @@ func (m Model) renderChart() string {
 	types := []string{"1. Bar Chart", "2. Line Chart", "3. Sparkline", "4. Pie Chart"}
 	for i, typ := range types {
 		if i == m.chartType {
-			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("→ " + typ) + "\n"
+			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("→ "+typ) + "\n"
 		} else {
-			content += lipgloss.NewStyle().Foreground(t.Text).Render("  " + typ) + "\n"
+			content += lipgloss.NewStyle().Foreground(t.Text).Render("  "+typ) + "\n"
 		}
 	}
 
@@ -409,7 +409,7 @@ func (m Model) renderChart() string {
 
 	// Render chart
 	modalStyle := lipgloss.NewStyle()
-	
+
 	switch m.chartType {
 	case 0: // Bar
 		content += renderBarChart(chartData, modalStyle, t.Accent, t.Text)
@@ -434,7 +434,7 @@ func (m Model) renderChart() string {
 // renderSelectRange renders the selection mode overlay
 func (m Model) renderSelectRange() string {
 	base := m.renderNormal()
-	
+
 	// Add selection info overlay
 	t := theme.GetCurrentTheme()
 	info := lipgloss.NewStyle().

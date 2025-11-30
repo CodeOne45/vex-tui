@@ -9,9 +9,9 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/vex/internal/loader"
-	"github.com/vex/internal/ui"
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/internal/loader"
+	"github.com/odesaur/vex-tui/internal/ui"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 // Init initializes the model
@@ -228,7 +228,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		} else {
 			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("Selected %dx%d range - Press v to visualize", 
+				Message: fmt.Sprintf("Selected %dx%d range - Press v to visualize",
 					abs(m.selectEnd[0]-m.selectStart[0])+1,
 					abs(m.selectEnd[1]-m.selectStart[1])+1),
 				Type: models.StatusSuccess,

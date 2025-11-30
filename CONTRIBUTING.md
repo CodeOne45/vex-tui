@@ -41,11 +41,11 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ```bash
 # Clone your fork
-git clone https://github.com/CodeOne45/vex-tui.git
+git clone https://github.com/odesaur/vex-tui.git
 cd vex-tui
 
 # Add upstream remote
-git remote add upstream https://github.com/vex-tui/vex-tui.git
+git remote add upstream https://github.com/odesaur/vex-tui.git
 # Install dependencies
 go mod download
 

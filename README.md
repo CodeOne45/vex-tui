@@ -1,85 +1,49 @@
-# 📊 Vex - Excel Viewer
+# Vex - Excel Viewer
 
-A beautiful, fast, and feature-rich terminal-based Excel and CSV viewer built with Go.
+A TUI Excel and CSV viewer in Go 
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/odesaur/vex-tui/releases)
 
 ![Vex Demo](assets/vex-demo.gif)
 
 
-## ✨ Features
+## Installation
 
-### 🎨 Six Beautiful Themes
-
-- **Catppuccin Mocha** - Soft pastels, perfect for all-day use
-- **Nord** - Cool Arctic blues, minimal and focused
-- **Rosé Pine** - Elegant rose tones, sophisticated
-- **Tokyo Night** - Vibrant cyberpunk aesthetic
-- **Gruvbox** - Warm retro colors, comfortable
-- **Dracula** - Classic high contrast theme
-
-### 🔍 Powerful Navigation
-
-- Vim-style keybindings (hjkl) and arrow keys
-- Jump to any cell (Ctrl+G) with multiple format support
-- Page Up/Down, Home/End
-- Search across all cells and formulas (/)
-- Navigate search results (n/N)
-
-### 📋 Data Operations
-
-- Copy cell (c) or entire row (C)
-- Export to CSV or JSON
-- Toggle formula display (f)
-- View detailed cell information (Enter)
-
-### 📊 Live Data Visualization
-
-- Bar charts
-- Line charts
-- Sparklines
-- Pie charts
-
-### 📑 File Support
-
-- Excel files (.xlsx, .xlsm, .xls)
-- CSV files
-- Multiple sheets with Tab navigation
-- Formula display and evaluation
-- Large file optimization with lazy loading
-
-## 🚀 Installation
-
-### Using go install
+### Using go install (quickest)
 
 ```bash
-go install github.com/CodeOne45/vex-tui@latest
+go install github.com/odesaur/vex-tui@latest
 ```
 
-### Build from Source
+This places the `vex` binary in `$(go env GOPATH)/bin` (or `$(go env GOBIN)` if set). Ensure that directory is on your `PATH`.
+
+### From source
 
 ```bash
 # Clone the repository
-git clone https://github.com/CodeOne45/vex-tui.git
+git clone https://github.com/odesaur/vex-tui.git
 cd vex-tui
 
 # Install dependencies
 go mod download
 
-# Build
+# Build locally
 go build -o vex .
-
-# Optional: Install globally
-go install
 ```
 
-### Download Binary
+### One-command install via Make
 
-Download pre-built binaries from the [releases page](https://github.com/vex/releases).
+```bash
+git clone https://github.com/odesaur/vex-tui.git
+cd vex-tui
+make install
+```
 
-## 📖 Usage
+`make install` will produce an optimized build and install it to your Go bin directory so you can run `vex` from anywhere.
+
+## Usage
 
 ```bash
 # Basic usage
@@ -92,7 +56,7 @@ vex report.csv --theme nord
 vex sales.xlsx -t tokyo-night
 ```
 
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 ### Navigation
 
@@ -136,7 +100,7 @@ Step 2: Visualize
    - 4: Pie Chart
 3. Press Esc to close
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 vex-tui/
@@ -158,7 +122,7 @@ vex-tui/
         └── models.go
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
@@ -166,7 +130,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ```bash
 # Clone the repository
-git clone https://github.com/CodeOne45/vex-tui.git
+git clone https://github.com/odesaur/vex-tui.git
 cd vex
 
 # Install dependencies
@@ -179,19 +143,8 @@ go test ./...
 go build -o vex .
 ```
 
-### Code Style
 
-This project follows standard Go conventions:
-
-- Run `go fmt` before committing
-- Follow [Effective Go](https://golang.org/doc/effective_go.html) guidelines
-- Write clear commit messages
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with the amazing [Charm](https://charm.sh/) ecosystem
   - [Bubble Tea](https://github.com/charmbracelet/bubbletea) - TUI framework
@@ -200,16 +153,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Excel parsing by [Excelize](https://github.com/xuri/excelize)
 - Clipboard support by [clipboard](https://github.com/atotto/clipboard)
 - Themes inspired by [Catppuccin](https://github.com/catppuccin/catppuccin), [Nord](https://www.nordtheme.com/), [Rosé Pine](https://rosepinetheme.com/), [Tokyo Night](https://github.com/enkia/tokyo-night-vscode-theme), [Gruvbox](https://github.com/morhetz/gruvbox), and [Dracula](https://draculatheme.com/)
-
-## 🔒 Security
-
-If you discover a security vulnerability, please send an email to [security@vex-tui.dev](mailto:security@vex-tui.dev). All security vulnerabilities will be promptly addressed.
-
-## 📮 Contact
-
-- GitHub: [@vex-tui](https://github.com/CodeOne45/vex-tui)
-- Issues: [GitHub Issues](https://github.com/CodeOne45/vex-tui/issues)
-
----
-
-Made with ❤️ for terminal enthusiasts everywhere.

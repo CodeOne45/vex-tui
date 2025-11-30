@@ -5,11 +5,11 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/vex/internal/app"
-	"github.com/vex/internal/loader"
+	"github.com/odesaur/vex-tui/internal/app"
+	"github.com/odesaur/vex-tui/internal/loader"
 )
 
-const version = "2.0.0"
+var version = "2.0.0"
 
 func main() {
 	if len(os.Args) < 2 {

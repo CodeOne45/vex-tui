@@ -3,9 +3,9 @@ package app
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/vex/internal/theme"
-	"github.com/vex/internal/ui"
-	"github.com/vex/pkg/models"
+	"github.com/odesaur/vex-tui/internal/theme"
+	"github.com/odesaur/vex-tui/internal/ui"
+	"github.com/odesaur/vex-tui/pkg/models"
 )
 
 // Model represents the application state
@@ -32,12 +32,12 @@ type Model struct {
 	filename      string
 	themeName     string
 	styles        *ui.Styles
-	
+
 	// Chart visualization
-	chartType     int
-	selectStart   [2]int // [row, col]
-	selectEnd     [2]int // [row, col]
-	isSelecting   bool
+	chartType   int
+	selectStart [2]int // [row, col]
+	selectEnd   [2]int // [row, col]
+	isSelecting bool
 }
 
 // NewModel creates a new application model

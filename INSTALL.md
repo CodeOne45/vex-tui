@@ -22,12 +22,12 @@ This document provides detailed installation instructions for Excel TUI on vario
 ### Using go install
 
 ```bash
-go install github.com/CodeOne45/vex-tui@latest
+go install github.com/odesaur/vex-tui@latest
 ```
 
 ### Download Pre-built Binaries
 
-1. Visit the [releases page](https://github.com/CodeOne45/vex-tui/releases)
+1. Visit the [releases page](https://github.com/odesaur/vex-tui/releases)
 2. Download the appropriate binary for your platform
 3. Extract and move to your PATH
 
@@ -46,7 +46,7 @@ brew install vex
 
 ```bash
 # Download latest release
-curl -L https://github.com/CodeOne45/vex-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o vex-tui.tar.gz
+curl -L https://github.com/odesaur/vex-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o vex-tui.tar.gz
 
 # Extract
 tar xzf vex.tar.gz
@@ -82,7 +82,7 @@ sudo dnf install vex
 
 ```bash
 # Download latest release
-wget https://github.com/CodeOne45/vex-tui/releases/latest/download/vexlinux-amd64.tar.gz
+wget https://github.com/odesaur/vex-tui/releases/latest/download/vexlinux-amd64.tar.gz
 
 # Extract
 tar xzf vexlinux-amd64.tar.gz
@@ -120,7 +120,7 @@ scoop install vex
 
 #### Manual Installation
 
-1. Download `vexwindows-amd64.zip` from [releases](https://github.com/CodeOne45/vex-tui/releases/latest)
+1. Download `vexwindows-amd64.zip` from [releases](https://github.com/odesaur/vex-tui/releases/latest)
 2. Extract the ZIP file
 3. Add the directory to your PATH:
    - Right-click "This PC" → Properties
@@ -146,7 +146,7 @@ go version
 
 ```bash
 # Clone the repository
-git clone https://github.com/CodeOne45/vex-tui.git
+git clone https://github.com/odesaur/vex-tui.git
 cd vex
 
 # Install dependencies
@@ -319,13 +319,13 @@ After successful installation:
 
 1. Read the [README](README.md) for feature overview
 2. Check [CONTRIBUTING](CONTRIBUTING.md) if you want to contribute
-3. Report issues on [GitHub](https://github.com/CodeOne45/vex-tui/issues)
+3. Report issues on [GitHub](https://github.com/odesaur/vex-tui/issues)
 
 ## Support
 
 If you encounter issues not covered here:
 
-- Check [existing issues](https://github.com/CodeOne45/vex-tui/issues)
+- Check [existing issues](https://github.com/odesaur/vex-tui/issues)
 - Create a new issue with:
   - Your OS and version
   - Go version (if building from source)
