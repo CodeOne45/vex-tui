@@ -31,6 +31,7 @@ type Model struct {
 	keys          KeyMap
 	filename      string
 	themeName     string
+	themeIndex    int
 	styles        *ui.Styles
 
 	// Chart visualization
@@ -44,8 +45,8 @@ type Model struct {
 func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	// Set theme
 	if !theme.SetTheme(themeName) {
-		theme.SetTheme("catppuccin")
-		themeName = "catppuccin"
+		theme.SetTheme("rose-pine")
+		themeName = "rose-pine"
 	}
 
 	// Initialize styles
@@ -77,6 +78,7 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 		keys:         DefaultKeyMap(),
 		filename:     filename,
 		themeName:    themeName,
+		themeIndex:   themeIndexByKey(themeName),
 		styles:       styles,
 		status: models.StatusMsg{
 			Message: "Ready | " + theme.GetCurrentTheme().Name,
@@ -141,8 +143,8 @@ func (m *Model) isSearchMatch(row, col int) bool {
 func (m *Model) applyTheme(name string) {
 	if theme.SetTheme(name) {
 		m.themeName = name
+		m.themeIndex = themeIndexByKey(name)
 		m.styles = ui.InitStyles()
-		m.mode = models.ModeNormal
 		m.status = models.StatusMsg{
 			Message: "Theme: " + theme.GetCurrentTheme().Name,
 			Type:    models.StatusSuccess,

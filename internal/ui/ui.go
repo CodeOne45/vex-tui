@@ -54,14 +54,14 @@ func InitStyles() *Styles {
 			Bold(true).
 			Foreground(t.Secondary).
 			Background(t.Border).
-			Align(lipgloss.Center).
+			Align(lipgloss.Left).
 			Width(MinCellWidth),
 
 		HeaderHighlight: lipgloss.NewStyle().
 			Bold(true).
 			Foreground(t.Secondary).
 			Background(t.ColHighlight).
-			Align(lipgloss.Center).
+			Align(lipgloss.Left).
 			Width(MinCellWidth),
 
 		Cell: lipgloss.NewStyle().
@@ -206,6 +206,14 @@ func PadCenter(s string, width int) string {
 	rightPad := width - len(s) - leftPad
 
 	return strings.Repeat(" ", leftPad) + s + strings.Repeat(" ", rightPad)
+}
+
+// PadRight pads a string on the right to fit the desired width
+func PadRight(s string, width int) string {
+	if len(s) >= width {
+		return TruncateToWidth(s, width)
+	}
+	return s + strings.Repeat(" ", width-len(s))
 }
 
 // WrapText wraps text to fit within a specified width

@@ -67,7 +67,7 @@ func printUsage() {
 }
 
 func parseThemeFlag() string {
-	themeName := "catppuccin" // default
+	themeName := "rose-pine" // default
 	for i := 2; i < len(os.Args)-1; i++ {
 		if os.Args[i] == "--theme" || os.Args[i] == "-t" {
 			if i+1 < len(os.Args) {

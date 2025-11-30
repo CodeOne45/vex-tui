@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"math"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -60,11 +61,12 @@ func (m Model) renderNormal() string {
 	var b strings.Builder
 
 	// Title bar
-	title := fmt.Sprintf("File: %s", m.filename)
+	fileName := filepath.Base(m.filename)
+	title := fmt.Sprintf("File: %s", fileName)
 	if len(m.sheets) > 1 {
-		title += fmt.Sprintf(" | %s (%d/%d)", sheet.Name, m.currentSheet+1, len(m.sheets))
-	} else {
-		title += fmt.Sprintf(" | %s", sheet.Name)
+		title += fmt.Sprintf(" | Sheet: %s (%d/%d)", sheet.Name, m.currentSheet+1, len(m.sheets))
+	} else if sheet.Name != fileName {
+		title += fmt.Sprintf(" | Sheet: %s", sheet.Name)
 	}
 	b.WriteString(m.styles.Title.Render(title))
 	b.WriteString("\n")
@@ -140,6 +142,10 @@ func (m Model) renderTable() string {
 		colWidth = ui.MaxCellWidth
 	}
 
+	tableWidth := rowNumberWidth + (visibleCols * (colWidth + 1)) + 1
+	leftPad := ui.Max(0, (m.width-tableWidth)/2)
+	pad := strings.Repeat(" ", leftPad)
+
 	header := m.styles.Header.Width(colWidth)
 	headerHighlight := m.styles.HeaderHighlight.Width(colWidth)
 	cellStyle := m.styles.Cell.Width(colWidth)
@@ -153,15 +159,16 @@ func (m Model) renderTable() string {
 		Width(colWidth)
 
 	// Column headers
+	b.WriteString(pad)
 	b.WriteString(m.styles.RowNum.Render(""))
 	b.WriteString(sep)
 
 	for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
 		colLetter := ui.ColIndexToLetter(col)
 		if col == m.cursorCol {
-			b.WriteString(headerHighlight.Render(ui.PadCenter(colLetter, colWidth)))
+			b.WriteString(headerHighlight.Render(ui.TruncateToWidth(colLetter, colWidth)))
 		} else {
-			b.WriteString(header.Render(ui.PadCenter(colLetter, colWidth)))
+			b.WriteString(header.Render(ui.TruncateToWidth(colLetter, colWidth)))
 		}
 		b.WriteString(sep)
 	}
@@ -170,6 +177,7 @@ func (m Model) renderTable() string {
 	// Data rows
 	endRow := ui.Min(m.offsetRow+visibleRows, sheet.MaxRows)
 	for row := m.offsetRow; row < endRow; row++ {
+		b.WriteString(pad)
 		// Row number
 		if row == m.cursorRow {
 			b.WriteString(m.styles.SelectedRowNum.Render(fmt.Sprintf("%d", row+1)))
@@ -356,38 +364,30 @@ func (m Model) renderThemeSelector() string {
 
 	content := m.styles.ModalTitle.Render("Select Theme") + "\n\n"
 
-	themes := []struct {
-		num  string
-		name string
-		desc string
-	}{
-		{"1", "Catppuccin Mocha", "Soft pastels, gentle on the eyes"},
-		{"2", "Nord", "Cool Arctic blues, minimal"},
-		{"3", "Rosé Pine", "Elegant rose tones"},
-		{"4", "Tokyo Night", "Vibrant cyberpunk vibes"},
-		{"5", "Gruvbox", "Warm retro colors"},
-		{"6", "Dracula", "Classic high contrast"},
-	}
-
-	for _, theme := range themes {
+	for i, opt := range themeOptions {
 		numStyle := lipgloss.NewStyle().Foreground(t.Primary).Bold(true)
 		nameStyle := lipgloss.NewStyle().Foreground(t.Text).Bold(true)
 		descStyle := lipgloss.NewStyle().Foreground(t.DimText)
 
-		current := ""
-		if strings.Contains(strings.ToLower(theme.name), strings.ToLower(m.themeName)) ||
-			strings.Contains(strings.ToLower(m.themeName), strings.ToLower(strings.ReplaceAll(theme.name, " ", "-"))) {
-			current = lipgloss.NewStyle().Foreground(t.Accent).Render(" *")
+		pointer := " "
+		if i == m.themeIndex {
+			pointer = ">"
+			nameStyle = nameStyle.Foreground(t.Accent)
 		}
 
-		content += numStyle.Render(theme.num) + "  " + nameStyle.Render(theme.name) + current + "\n"
-		content += "   " + descStyle.Render(theme.desc) + "\n\n"
+		current := ""
+		if opt.Key == m.themeName {
+			current = lipgloss.NewStyle().Foreground(t.Accent).Render(" (active)")
+		}
+
+		content += pointer + " " + numStyle.Render(fmt.Sprintf("%d)", i+1)) + " " + nameStyle.Render(opt.Name) + current + "\n"
+		content += "   " + descStyle.Render(opt.Desc) + "\n\n"
 	}
 
 	content += lipgloss.NewStyle().
 		Foreground(t.DimText).
 		Italic(true).
-		Render("\nPress 1-6 to select, Esc to cancel")
+		Render("\nUse j/k or arrows to move, numbers to jump, Enter/esc to close")
 
 	return m.styles.Modal.Width(60).Render(content)
 }

@@ -129,12 +129,12 @@ var (
 	}
 
 	// currentTheme is the active theme
-	currentTheme = themes["catppuccin"]
+	currentTheme = themes["rose-pine"]
 )
 
 // GetThemeNames returns all available theme names
 func GetThemeNames() []string {
-	return []string{"catppuccin", "nord", "rose-pine", "tokyo-night", "gruvbox", "dracula"}
+	return []string{"rose-pine", "catppuccin", "nord", "tokyo-night", "gruvbox", "dracula"}
 }
 
 // SetTheme changes the current theme

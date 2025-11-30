@@ -204,6 +204,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.Theme):
 		m.mode = models.ModeTheme
+		m.themeIndex = themeIndexByKey(m.themeName)
 		return m, nil
 
 	case key.Matches(msg, m.keys.Help):
@@ -337,18 +338,26 @@ func (m Model) updateTheme(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "q":
 		m.mode = models.ModeNormal
-	case "1":
-		m.applyTheme("catppuccin")
-	case "2":
-		m.applyTheme("nord")
-	case "3":
-		m.applyTheme("rose-pine")
-	case "4":
-		m.applyTheme("tokyo-night")
-	case "5":
-		m.applyTheme("gruvbox")
-	case "6":
-		m.applyTheme("dracula")
+	case "enter":
+		m.mode = models.ModeNormal
+	case "up", "k":
+		if m.themeIndex > 0 {
+			m.themeIndex--
+		}
+		m.applyTheme(themeOptions[m.themeIndex].Key)
+	case "down", "j":
+		if m.themeIndex < len(themeOptions)-1 {
+			m.themeIndex++
+		}
+		m.applyTheme(themeOptions[m.themeIndex].Key)
+	case "1", "2", "3", "4", "5", "6":
+		if len(msg.Runes) > 0 {
+			idx := int(msg.Runes[0] - '1')
+			if idx >= 0 && idx < len(themeOptions) {
+				m.themeIndex = idx
+				m.applyTheme(themeOptions[idx].Key)
+			}
+		}
 	}
 	return m, nil
 }
