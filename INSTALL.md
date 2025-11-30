@@ -39,26 +39,26 @@ go install github.com/odesaur/vex-tui@latest
 
 ```bash
 # Coming soon
-brew install vex
+brew install vex-tui
 ```
 
 #### Manual Installation
 
 ```bash
 # Download latest release
-curl -L https://github.com/odesaur/vex-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o vex-tui.tar.gz
+curl -L https://github.com/odesaur/vex-tui/releases/latest/download/vex-tui-darwin-arm64.tar.gz -o vex-tui.tar.gz
 
 # Extract
-tar xzf vex.tar.gz
+tar xzf vex-tui.tar.gz
 
 # Make executable
-chmod +x vexdarwin-arm64
+chmod +x vex-tui-darwin-arm64
 
 # Move to PATH
-sudo mv vexdarwin-arm64 /usr/local/bin/vex
+sudo mv vex-tui-darwin-arm64 /usr/local/bin/vex-tui
 
 # Verify
-vex --version
+vex-tui --version
 ```
 
 **Note**: On macOS, you may need to allow the app in System Preferences → Security & Privacy
@@ -69,29 +69,29 @@ vex --version
 
 ```bash
 # Debian/Ubuntu (Coming soon)
-sudo apt install vex
+sudo apt install vex-tui
 
 # Arch Linux (Coming soon)
-yay -S vex
+yay -S vex-tui
 
 # Fedora (Coming soon)
-sudo dnf install vex
+sudo dnf install vex-tui
 ```
 
 #### Manual Installation
 
 ```bash
 # Download latest release
-wget https://github.com/odesaur/vex-tui/releases/latest/download/vexlinux-amd64.tar.gz
+wget https://github.com/odesaur/vex-tui/releases/latest/download/vex-tui-linux-amd64.tar.gz
 
 # Extract
-tar xzf vexlinux-amd64.tar.gz
+tar xzf vex-tui-linux-amd64.tar.gz
 
 # Make executable
-chmod +x vexlinux-amd64
+chmod +x vex-tui-linux-amd64
 
 # Move to PATH
-sudo mv vexlinux-amd64 /usr/local/bin/vex
+sudo mv vex-tui-linux-amd64 /usr/local/bin/vex-tui
 
 # Install clipboard utilities
 sudo apt-get install xclip  # Ubuntu/Debian
@@ -101,7 +101,7 @@ sudo pacman -S xclip        # Arch
 sudo dnf install xclip      # Fedora
 
 # Verify
-vex --version
+vex-tui --version
 ```
 
 ### Windows
@@ -109,24 +109,24 @@ vex --version
 #### Using Chocolatey (Coming soon)
 
 ```powershell
-choco install vex
+choco install vex-tui
 ```
 
 #### Using Scoop (Coming soon)
 
 ```powershell
-scoop install vex
+scoop install vex-tui
 ```
 
 #### Manual Installation
 
-1. Download `vexwindows-amd64.zip` from [releases](https://github.com/odesaur/vex-tui/releases/latest)
+1. Download `vex-tui-windows-amd64.zip` from [releases](https://github.com/odesaur/vex-tui/releases/latest)
 2. Extract the ZIP file
 3. Add the directory to your PATH:
    - Right-click "This PC" → Properties
    - Advanced system settings → Environment Variables
    - Edit PATH and add the directory
-4. Open a new terminal and verify: `vex --version`
+4. Open a new terminal and verify: `vex-tui --version`
 
 **Recommended Terminal**: Windows Terminal for best experience
 
@@ -147,13 +147,13 @@ go version
 ```bash
 # Clone the repository
 git clone https://github.com/odesaur/vex-tui.git
-cd vex
+cd vex-tui
 
 # Install dependencies
 go mod download
 
 # Build
-go build -o vex .
+go build -o vex-tui .
 
 # Or use Make
 make build
@@ -166,7 +166,7 @@ make install
 
 ```bash
 # Build with race detector
-go build -race -o vex .
+go build -race -o vex-tui .
 
 # Run tests
 make test
@@ -181,32 +181,32 @@ After installation, verify it works:
 
 ```bash
 # Check version
-vex --version
+vex-tui --version
 
 # Run with sample data
-vex sample_data.csv
+vex-tui sample_data.csv
 
 # Test with a theme
-vex sample_data.csv --theme nord
+vex-tui sample_data.csv --theme nord
 ```
 
 ## Troubleshooting
 
 ### "command not found"
 
-**Problem**: Shell can't find the `vex` command
+**Problem**: Shell can't find the `vex-tui` command
 
 **Solution**:
 
 ```bash
 # Check if binary is in PATH
-which vex
+which vex-tui
 
 # If not found, add to PATH
-export PATH="$PATH:/path/to/vex"
+export PATH="$PATH:/path/to/vex-tui"
 
 # Make permanent (add to ~/.bashrc or ~/.zshrc)
-echo 'export PATH="$PATH:/path/to/vex"' >> ~/.bashrc
+echo 'export PATH="$PATH:/path/to/vex-tui"' >> ~/.bashrc
 ```
 
 ### Clipboard Not Working (Linux)
@@ -248,7 +248,7 @@ echo 'export TERM=xterm-256color' >> ~/.bashrc
 
 ```bash
 # Remove quarantine attribute
-xattr -d com.apple.quarantine /path/to/vex
+xattr -d com.apple.quarantine /path/to/vex-tui
 
 # Or allow in System Preferences
 # System Preferences → Security & Privacy → General
@@ -284,33 +284,33 @@ go build .
 ### If installed via go install
 
 ```bash
-rm $(which vex)
+rm $(which vex-tui)
 ```
 
 ### If installed manually
 
 ```bash
 # Remove binary
-sudo rm /usr/local/bin/vex
+sudo rm /usr/local/bin/vex-tui
 
 # Remove config (if any)
-rm -rf ~/.config/vex
+rm -rf ~/.config/vex-tui
 ```
 
 ### If installed via package manager
 
 ```bash
 # macOS
-brew uninstall vex
+brew uninstall vex-tui
 
 # Linux
-sudo apt remove vex     # Debian/Ubuntu
-yay -R vex              # Arch
-sudo dnf remove vex     # Fedora
+sudo apt remove vex-tui     # Debian/Ubuntu
+yay -R vex-tui              # Arch
+sudo dnf remove vex-tui     # Fedora
 
 # Windows
-choco uninstall vex     # Chocolatey
-scoop uninstall vex     # Scoop
+choco uninstall vex-tui     # Chocolatey
+scoop uninstall vex-tui     # Scoop
 ```
 
 ## Next Steps

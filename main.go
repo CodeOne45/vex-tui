@@ -11,6 +11,8 @@ import (
 
 var version = "2.0.0"
 
+const binaryName = "vex-tui"
+
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
@@ -54,14 +56,14 @@ func main() {
 
 func printUsage() {
 	fmt.Printf("Excel TUI v%s - Modern Terminal Excel Viewer\n\n", version)
-	fmt.Println("Usage: vex <file> [--theme <name>]")
+	fmt.Printf("Usage: %s <file> [--theme <name>]\n", binaryName)
 	fmt.Println("\nAvailable themes:")
 	for _, name := range app.GetThemeNames() {
 		fmt.Printf("  • %s\n", name)
 	}
 	fmt.Println("\nExample:")
-	fmt.Println("  vex data.xlsx")
-	fmt.Println("  vex report.csv --theme nord")
+	fmt.Printf("  %s data.xlsx\n", binaryName)
+	fmt.Printf("  %s report.csv --theme nord\n", binaryName)
 }
 
 func parseThemeFlag() string {

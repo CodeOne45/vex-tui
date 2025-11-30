@@ -1,6 +1,6 @@
 .PHONY: build run clean install test lint fmt help release
 
-BINARY_NAME=vex
+BINARY_NAME=vex-tui
 VERSION ?= 2.0.0
 BUILD_DIR=dist
 GO_FILES=$(shell find . -name '*.go' -type f)

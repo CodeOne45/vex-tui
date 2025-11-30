@@ -17,7 +17,7 @@ A TUI Excel and CSV viewer in Go
 go install github.com/odesaur/vex-tui@latest
 ```
 
-This places the `vex` binary in `$(go env GOPATH)/bin` (or `$(go env GOBIN)` if set). Ensure that directory is on your `PATH`.
+This places the `vex-tui` binary in `$(go env GOPATH)/bin` (or `$(go env GOBIN)` if set). Ensure that directory is on your `PATH`.
 
 ### From source
 
@@ -30,7 +30,7 @@ cd vex-tui
 go mod download
 
 # Build locally
-go build -o vex .
+go build -o vex-tui .
 ```
 
 ### One-command install via Make
@@ -41,19 +41,19 @@ cd vex-tui
 make install
 ```
 
-`make install` will produce an optimized build and install it to your Go bin directory so you can run `vex` from anywhere.
+`make install` will produce an optimized build and install it to your Go bin directory so you can run `vex-tui` from anywhere.
 
 ## Usage
 
 ```bash
 # Basic usage
-vex data.xlsx
+vex-tui data.xlsx
 
 # With a specific theme
-vex report.csv --theme nord
+vex-tui report.csv --theme nord
 
 # Short flag
-vex sales.xlsx -t tokyo-night
+vex-tui sales.xlsx -t tokyo-night
 ```
 
 ## Keyboard Shortcuts
@@ -131,7 +131,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 ```bash
 # Clone the repository
 git clone https://github.com/odesaur/vex-tui.git
-cd vex
+cd vex-tui
 
 # Install dependencies
 go mod download
@@ -140,7 +140,7 @@ go mod download
 go test ./...
 
 # Build
-go build -o vex .
+go build -o vex-tui .
 ```
 
 
