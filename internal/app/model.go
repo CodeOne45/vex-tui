@@ -104,6 +104,9 @@ func (m *Model) resetView() {
 func (m *Model) adjustViewport() {
 	visibleRows := ui.Max(1, m.height-9)
 	visibleCols := ui.Max(1, (m.width-8)/(ui.MinCellWidth+2))
+	if len(m.sheets) > 0 {
+		visibleCols = ui.Min(visibleCols, m.sheets[m.currentSheet].MaxCols)
+	}
 
 	// Adjust vertical
 	if m.cursorRow < m.offsetRow {

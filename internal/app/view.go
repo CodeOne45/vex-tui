@@ -131,6 +131,7 @@ func (m Model) renderTable() string {
 	sheet := m.sheets[m.currentSheet]
 	visibleRows := ui.Max(1, m.height-9)
 	visibleCols := ui.Max(1, (m.width-8)/(ui.MinCellWidth+2))
+	visibleCols = ui.Min(visibleCols, sheet.MaxCols)
 
 	var b strings.Builder
 	sep := m.styles.Separator.Render("│")
