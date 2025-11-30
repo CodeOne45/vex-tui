@@ -58,73 +58,27 @@ vex-tui sales.xlsx -t tokyo-night
 
 ## Keyboard Shortcuts
 
-### Navigation
+Press `?` in the app anytime to open the built-in help with the full list. Quick reference:
 
-- `↑↓←→` or `hjkl` - Navigate cells
-- `Page Up/Down` - Scroll by page
-- `Ctrl+U/D` - Alternative page scroll
-- `Home/End` or `0/$` - First/last column
-- `g/G` - First/last column
-- `Tab/Shift+Tab` - Next/previous sheet
+| Keys                   | Action                        |
+| ---------------------- | ----------------------------- |
+| `↑/↓/←/→` or `hjkl`    | Move cursor                   |
+| `PageUp/PageDown`      | Page scroll                   |
+| `Tab` / `Shift+Tab`    | Next / previous sheet         |
+| `/`, `n`, `N`          | Search, next result, previous |
+| `Ctrl+G`               | Jump to cell                  |
+| `Enter`                | Cell details                  |
+| `c` / `C`              | Copy cell / row               |
+| `f`                    | Toggle formulas               |
+| `e`                    | Export sheet                  |
+| `t`                    | Theme selector                |
+| `q` or `Ctrl+C`        | Quit                          |
 
-### Search & Actions
+Data visualization:
 
-- `/` - Search (vim-style)
-- `n/N` - Next/previous result
-- `Ctrl+G` - Jump to cell
-- `Enter` - View cell details
-- `c` - Copy cell
-- `C` - Copy entire row
-- `f` - Toggle formula display
-- `e` - Export sheet
-- `t` - Theme selector
-- `?` - Toggle help
-- `q` or `Ctrl+C` - Quit
-
-### Data Visualization
-
-Step 1: Select Data Range
-
-1. Navigate to your data
-2. Press 'V' (shift+v) to start selection
-3. Move cursor to select range (arrows/hjkl)
-4. Press 'V' again to finish selection
-
-Step 2: Visualize
-
-1. Press 'v' (lowercase) to open visualization
-2. Press 1-4 to switch between chart types:
-   - 1: Bar Chart
-   - 2: Line Chart
-   - 3: Sparkline
-   - 4: Pie Chart
-3. Press Esc to close
-
-## Project Structure
-
-```
-vex-tui/
-├── main.go                 # Application entry point
-├── internal/
-│   ├── app/               # Application logic
-│   │   ├── model.go       # State management
-│   │   ├── update.go      # Event handling
-│   │   ├── view.go        # Rendering logic
-│   │   └── keys.go        # Keybindings
-│   ├── loader/            # File I/O operations
-│   │   └── loader.go
-│   ├── theme/             # Theme management
-│   │   └── theme.go
-│   └── ui/                # UI utilities
-│       └── ui.go
-└── pkg/
-    └── models/            # Data models
-        └── models.go
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+1) Select range with `V` (start/finish selection)  
+2) Open charts with `v` and pick `1-4` (bar, line, sparkline, pie)  
+3) `Esc` to close
 
 ### Development Setup
 

@@ -59,7 +59,7 @@ func printUsage() {
 	fmt.Printf("Usage: %s <file> [--theme <name>]\n", binaryName)
 	fmt.Println("\nAvailable themes:")
 	for _, name := range app.GetThemeNames() {
-		fmt.Printf("  • %s\n", name)
+		fmt.Printf("  - %s\n", name)
 	}
 	fmt.Println("\nExample:")
 	fmt.Printf("  %s data.xlsx\n", binaryName)

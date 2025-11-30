@@ -122,7 +122,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.currentSheet++
 			m.resetView()
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("→ %s", m.sheets[m.currentSheet].Name),
+				Message: fmt.Sprintf("Next sheet: %s", m.sheets[m.currentSheet].Name),
 				Type:    models.StatusInfo,
 			}
 		}
@@ -132,7 +132,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.currentSheet--
 			m.resetView()
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("← %s", m.sheets[m.currentSheet].Name),
+				Message: fmt.Sprintf("Prev sheet: %s", m.sheets[m.currentSheet].Name),
 				Type:    models.StatusInfo,
 			}
 		}
@@ -395,7 +395,7 @@ func (m *Model) jumpToCell(input string) {
 			m.cursorCol = col
 			m.centerView()
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("→ %s", ui.ColIndexToLetter(col)+fmt.Sprintf("%d", row+1)),
+				Message: fmt.Sprintf("Position: %s", ui.ColIndexToLetter(col)+fmt.Sprintf("%d", row+1)),
 				Type:    models.StatusSuccess,
 			}
 			return
@@ -409,7 +409,7 @@ func (m *Model) jumpToCell(input string) {
 			m.cursorRow = row
 			m.centerView()
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("→ Row %d", row+1),
+				Message: fmt.Sprintf("Row %d", row+1),
 				Type:    models.StatusSuccess,
 			}
 			return
@@ -427,7 +427,7 @@ func (m *Model) jumpToCell(input string) {
 					m.cursorCol = col
 					m.centerView()
 					m.status = models.StatusMsg{
-						Message: fmt.Sprintf("→ %d,%d", row+1, col+1),
+						Message: fmt.Sprintf("Position: %d,%d", row+1, col+1),
 						Type:    models.StatusSuccess,
 					}
 					return
@@ -504,7 +504,7 @@ func (m *Model) exportSheet(filename string) {
 		}
 	} else {
 		m.status = models.StatusMsg{
-			Message: fmt.Sprintf("✓ Exported to %s", filename),
+			Message: fmt.Sprintf("Exported to %s", filename),
 			Type:    models.StatusSuccess,
 		}
 	}

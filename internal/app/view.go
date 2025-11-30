@@ -44,7 +44,7 @@ func (m Model) View() string {
 // renderEmpty renders the empty state
 func (m Model) renderEmpty() string {
 	var b strings.Builder
-	b.WriteString(m.styles.Title.Render("📊 Excel TUI v2.0"))
+	b.WriteString(m.styles.Title.Render("Excel TUI v2.0"))
 	b.WriteString("\n\n")
 	b.WriteString(lipgloss.NewStyle().
 		Foreground(theme.GetCurrentTheme().DimText).
@@ -60,11 +60,11 @@ func (m Model) renderNormal() string {
 	var b strings.Builder
 
 	// Title bar
-	title := fmt.Sprintf("📊 %s", m.filename)
+	title := fmt.Sprintf("File: %s", m.filename)
 	if len(m.sheets) > 1 {
-		title += fmt.Sprintf(" • %s (%d/%d)", sheet.Name, m.currentSheet+1, len(m.sheets))
+		title += fmt.Sprintf(" | %s (%d/%d)", sheet.Name, m.currentSheet+1, len(m.sheets))
 	} else {
-		title += fmt.Sprintf(" • %s", sheet.Name)
+		title += fmt.Sprintf(" | %s", sheet.Name)
 	}
 	b.WriteString(m.styles.Title.Render(title))
 	b.WriteString("\n")
@@ -86,9 +86,13 @@ func (m Model) renderNormal() string {
 		b.WriteString(m.renderSearchBar())
 	}
 
-	// Help
+	// Help (short by default, full when toggled with '?')
 	b.WriteString("\n")
-	b.WriteString(m.styles.Help.Render(m.help.ShortHelpView(m.keys.ShortHelp())))
+	if m.help.ShowAll {
+		b.WriteString(m.styles.Help.Render(m.help.View(m.keys)))
+	} else {
+		b.WriteString(m.styles.Help.Render(m.help.ShortHelpView(m.keys.ShortHelp())))
+	}
 
 	return b.String()
 }
@@ -128,6 +132,25 @@ func (m Model) renderTable() string {
 
 	var b strings.Builder
 	sep := m.styles.Separator.Render("│")
+	rowNumberWidth := 5
+
+	availableWidth := m.width - rowNumberWidth - (visibleCols + 1) // account for separators
+	colWidth := ui.Max(ui.MinCellWidth, availableWidth/ui.Max(1, visibleCols))
+	if colWidth > ui.MaxCellWidth {
+		colWidth = ui.MaxCellWidth
+	}
+
+	header := m.styles.Header.Width(colWidth)
+	headerHighlight := m.styles.HeaderHighlight.Width(colWidth)
+	cellStyle := m.styles.Cell.Width(colWidth)
+	selectedCell := m.styles.SelectedCell.Width(colWidth)
+	rowHighlight := m.styles.RowHighlight.Width(colWidth)
+	colHighlight := m.styles.ColHighlight.Width(colWidth)
+	searchMatch := m.styles.SearchMatch.Width(colWidth)
+	selectionStyle := lipgloss.NewStyle().
+		Foreground(theme.GetCurrentTheme().Text).
+		Background(theme.GetCurrentTheme().Secondary).
+		Width(colWidth)
 
 	// Column headers
 	b.WriteString(m.styles.RowNum.Render(""))
@@ -136,9 +159,9 @@ func (m Model) renderTable() string {
 	for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
 		colLetter := ui.ColIndexToLetter(col)
 		if col == m.cursorCol {
-			b.WriteString(m.styles.HeaderHighlight.Render(ui.PadCenter(colLetter, ui.MinCellWidth)))
+			b.WriteString(headerHighlight.Render(ui.PadCenter(colLetter, colWidth)))
 		} else {
-			b.WriteString(m.styles.Header.Render(ui.PadCenter(colLetter, ui.MinCellWidth)))
+			b.WriteString(header.Render(ui.PadCenter(colLetter, colWidth)))
 		}
 		b.WriteString(sep)
 	}
@@ -169,26 +192,23 @@ func (m Model) renderTable() string {
 					}
 				}
 
-				cellText = ui.TruncateToWidth(cellText, ui.MinCellWidth)
+				cellText = ui.TruncateToWidth(cellText, colWidth)
 
 				// Determine style
 				var style lipgloss.Style
 				if row == m.cursorRow && col == m.cursorCol {
-					style = m.styles.SelectedCell
+					style = selectedCell
 				} else if m.isSelecting && m.isInSelection(row, col) {
 					// Highlight selection with different color
-					style = lipgloss.NewStyle().
-						Foreground(theme.GetCurrentTheme().Text).
-						Background(theme.GetCurrentTheme().Secondary).
-						Width(ui.MinCellWidth)
+					style = selectionStyle
 				} else if m.isSearchMatch(row, col) {
-					style = m.styles.SearchMatch
+					style = searchMatch
 				} else if row == m.cursorRow {
-					style = m.styles.RowHighlight
+					style = rowHighlight
 				} else if col == m.cursorCol {
-					style = m.styles.ColHighlight
+					style = colHighlight
 				} else {
-					style = m.styles.Cell
+					style = cellStyle
 				}
 
 				b.WriteString(style.Render(cellText))
@@ -199,15 +219,15 @@ func (m Model) renderTable() string {
 			for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
 				var style lipgloss.Style
 				if row == m.cursorRow && col == m.cursorCol {
-					style = m.styles.SelectedCell
+					style = selectedCell
 				} else if row == m.cursorRow {
-					style = m.styles.RowHighlight
+					style = rowHighlight
 				} else if col == m.cursorCol {
-					style = m.styles.ColHighlight
+					style = colHighlight
 				} else {
-					style = m.styles.Cell
+					style = cellStyle
 				}
-				b.WriteString(style.Render(strings.Repeat(" ", ui.MinCellWidth)))
+				b.WriteString(style.Render(strings.Repeat(" ", colWidth)))
 				b.WriteString(sep)
 			}
 		}
@@ -239,7 +259,7 @@ func (m Model) renderStatusBar() string {
 		parts = append(parts, lipgloss.NewStyle().
 			Foreground(t.SearchMatch).
 			Bold(true).
-			Render(fmt.Sprintf("🔍 %d/%d", m.searchIndex+1, len(m.searchResults))))
+			Render(fmt.Sprintf("Search %d/%d", m.searchIndex+1, len(m.searchResults))))
 	}
 
 	if m.status.Message != "" {
@@ -284,7 +304,7 @@ func (m Model) renderDetail() string {
 	cellRef := ui.ColIndexToLetter(m.cursorCol) + fmt.Sprintf("%d", m.cursorRow+1)
 	t := theme.GetCurrentTheme()
 
-	content := m.styles.ModalTitle.Render("📊 Cell Details") + "\n\n"
+	content := m.styles.ModalTitle.Render("Cell Details") + "\n\n"
 	content += m.styles.ModalKey.Render("Cell: ") + m.styles.ModalValue.Render(cellRef) + "\n\n"
 	content += m.styles.ModalKey.Render("Value:\n") + m.styles.ModalValue.Render(ui.WrapText(cell.Value, 56)) + "\n\n"
 
@@ -305,13 +325,13 @@ func (m Model) renderDetail() string {
 func (m Model) renderJump() string {
 	t := theme.GetCurrentTheme()
 
-	content := m.styles.ModalTitle.Render("🎯 Jump to Cell") + "\n\n"
+	content := m.styles.ModalTitle.Render("Jump to Cell") + "\n\n"
 	content += m.styles.ModalKey.Render("Enter cell reference:") + "\n"
 	content += m.jumpInput.View() + "\n\n"
 	content += lipgloss.NewStyle().Foreground(t.DimText).Render("Formats:\n")
-	content += lipgloss.NewStyle().Foreground(t.Text).Render("  • A100   (column + row)\n")
-	content += lipgloss.NewStyle().Foreground(t.Text).Render("  • 500    (row only)\n")
-	content += lipgloss.NewStyle().Foreground(t.Text).Render("  • 10,5   (row,col)")
+	content += lipgloss.NewStyle().Foreground(t.Text).Render("  - A100   (column + row)\n")
+	content += lipgloss.NewStyle().Foreground(t.Text).Render("  - 500    (row only)\n")
+	content += lipgloss.NewStyle().Foreground(t.Text).Render("  - 10,5   (row,col)")
 
 	return m.styles.Modal.Width(50).Render(content)
 }
@@ -320,7 +340,7 @@ func (m Model) renderJump() string {
 func (m Model) renderExport() string {
 	t := theme.GetCurrentTheme()
 
-	content := m.styles.ModalTitle.Render("💾 Export Sheet") + "\n\n"
+	content := m.styles.ModalTitle.Render("Export Sheet") + "\n\n"
 	content += m.styles.ModalKey.Render("Filename:") + "\n"
 	content += m.exportInput.View() + "\n\n"
 	content += lipgloss.NewStyle().
@@ -334,7 +354,7 @@ func (m Model) renderExport() string {
 func (m Model) renderThemeSelector() string {
 	t := theme.GetCurrentTheme()
 
-	content := m.styles.ModalTitle.Render("🎨 Select Theme") + "\n\n"
+	content := m.styles.ModalTitle.Render("Select Theme") + "\n\n"
 
 	themes := []struct {
 		num  string
@@ -357,7 +377,7 @@ func (m Model) renderThemeSelector() string {
 		current := ""
 		if strings.Contains(strings.ToLower(theme.name), strings.ToLower(m.themeName)) ||
 			strings.Contains(strings.ToLower(m.themeName), strings.ToLower(strings.ReplaceAll(theme.name, " ", "-"))) {
-			current = lipgloss.NewStyle().Foreground(t.Accent).Render(" ✓")
+			current = lipgloss.NewStyle().Foreground(t.Accent).Render(" *")
 		}
 
 		content += numStyle.Render(theme.num) + "  " + nameStyle.Render(theme.name) + current + "\n"
@@ -376,13 +396,13 @@ func (m Model) renderThemeSelector() string {
 func (m Model) renderChart() string {
 	t := theme.GetCurrentTheme()
 
-	content := m.styles.ModalTitle.Render("📊 Data Visualization") + "\n\n"
+	content := m.styles.ModalTitle.Render("Data Visualization") + "\n\n"
 
 	// Show chart type selector
 	types := []string{"1. Bar Chart", "2. Line Chart", "3. Sparkline", "4. Pie Chart"}
 	for i, typ := range types {
 		if i == m.chartType {
-			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("→ "+typ) + "\n"
+			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("-> "+typ) + "\n"
 		} else {
 			content += lipgloss.NewStyle().Foreground(t.Text).Render("  "+typ) + "\n"
 		}

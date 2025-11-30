@@ -79,7 +79,7 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 		themeName:    themeName,
 		styles:       styles,
 		status: models.StatusMsg{
-			Message: "Ready • " + theme.GetCurrentTheme().Name,
+			Message: "Ready | " + theme.GetCurrentTheme().Name,
 			Type:    models.StatusInfo,
 		},
 	}
