@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/CodeOne45/vex-tui/internal/app"
+	"github.com/CodeOne45/vex-tui/internal/loader"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/vex/internal/app"
-	"github.com/vex/internal/loader"
 )
 
 const version = "2.0.0"

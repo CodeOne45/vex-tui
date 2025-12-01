@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/vex/pkg/models"
 )
 
 const (
