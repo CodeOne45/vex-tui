@@ -5,7 +5,27 @@ All notable changes to Excel TUI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2025-02-01
+## [1.1.1] - 2025-12-04
+
+### Fixed
+
+- Fixed GitHub CI "no such tool covdata" error by removing race detector from coverage tests
+- Fixed CI workflow to properly run across different Go versions and platforms
+
+### Added
+
+- Added `--version` / `-v` flag to display version information
+- Added `--help` / `-h` flag to display usage information
+- Improved CLI argument parsing with proper flag handling
+- Added comprehensive help text with examples and keyboard shortcuts
+
+### Changed
+
+- Improved error messages and user feedback
+- Enhanced CI workflow with separate lint job
+- Updated release workflow for better reliability
+
+## [1.1.0] - 2025-11-27
 
 ### Added
 
@@ -13,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 'v' visualization window
 - Auto-scaling and grid-based rendering
 
-## [1.0.0] - 2025-01-26
+## [1.0.0] - 2025-11-26
 
 ### Added
 
