@@ -46,16 +46,16 @@ brew install vex
 
 ```bash
 # Download latest release
-curl -L https://github.com/CodeOne45/vex-tui/releases/latest/download/vexdarwin-arm64.tar.gz -o vex-tui.tar.gz
+curl -L https://github.com/CodeOne45/vex-tui/releases/latest/download/vex-darwin-arm64.tar.gz -o vex-tui.tar.gz
 
 # Extract
-tar xzf vex.tar.gz
+tar xzf vex-tui.tar.gz
 
 # Make executable
-chmod +x vexdarwin-arm64
+chmod +x vex-darwin-arm64
 
 # Move to PATH
-sudo mv vexdarwin-arm64 /usr/local/bin/vex
+sudo mv vex-darwin-arm64 /usr/local/bin/vex
 
 # Verify
 vex --version
@@ -82,16 +82,16 @@ sudo dnf install vex
 
 ```bash
 # Download latest release
-wget https://github.com/CodeOne45/vex-tui/releases/latest/download/vexlinux-amd64.tar.gz
+wget https://github.com/CodeOne45/vex-tui/releases/latest/download/vex-linux-amd64.tar.gz
 
 # Extract
-tar xzf vexlinux-amd64.tar.gz
+tar xzf vex-linux-amd64.tar.gz
 
 # Make executable
-chmod +x vexlinux-amd64
+chmod +x vex-linux-amd64
 
 # Move to PATH
-sudo mv vexlinux-amd64 /usr/local/bin/vex
+sudo mv vex-linux-amd64 /usr/local/bin/vex
 
 # Install clipboard utilities
 sudo apt-get install xclip  # Ubuntu/Debian
