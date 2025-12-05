@@ -126,6 +126,75 @@ var (
 			Error:         lipgloss.Color("#FF5555"),
 			Warning:       lipgloss.Color("#FFB86C"),
 		},
+		// Light themes
+		"catppuccin-latte": {
+			Name:          "Catppuccin Latte",
+			Primary:       lipgloss.Color("#8839EF"),
+			Secondary:     lipgloss.Color("#04A5E5"),
+			Accent:        lipgloss.Color("#40A02B"),
+			Text:          lipgloss.Color("#4C4F69"),
+			DimText:       lipgloss.Color("#9CA0B0"),
+			Background:    lipgloss.Color("#EFF1F5"),
+			Border:        lipgloss.Color("#DCE0E8"),
+			RowHighlight:  lipgloss.Color("#E6E9EF"),
+			ColHighlight:  lipgloss.Color("#DCE0E8"),
+			CellHighlight: lipgloss.Color("#7287FD"),
+			SearchMatch:   lipgloss.Color("#DF8E1D"),
+			Success:       lipgloss.Color("#40A02B"),
+			Error:         lipgloss.Color("#D20F39"),
+			Warning:       lipgloss.Color("#FE640B"),
+		},
+		"solarized-light": {
+			Name:          "Solarized Light",
+			Primary:       lipgloss.Color("#268BD2"),
+			Secondary:     lipgloss.Color("#2AA198"),
+			Accent:        lipgloss.Color("#859900"),
+			Text:          lipgloss.Color("#657B83"),
+			DimText:       lipgloss.Color("#93A1A1"),
+			Background:    lipgloss.Color("#FDF6E3"),
+			Border:        lipgloss.Color("#EEE8D5"),
+			RowHighlight:  lipgloss.Color("#EEE8D5"),
+			ColHighlight:  lipgloss.Color("#EEE8D5"),
+			CellHighlight: lipgloss.Color("#268BD2"),
+			SearchMatch:   lipgloss.Color("#B58900"),
+			Success:       lipgloss.Color("#859900"),
+			Error:         lipgloss.Color("#DC322F"),
+			Warning:       lipgloss.Color("#CB4B16"),
+		},
+		"github-light": {
+			Name:          "GitHub Light",
+			Primary:       lipgloss.Color("#0969DA"),
+			Secondary:     lipgloss.Color("#8250DF"),
+			Accent:        lipgloss.Color("#1A7F37"),
+			Text:          lipgloss.Color("#1F2328"),
+			DimText:       lipgloss.Color("#656D76"),
+			Background:    lipgloss.Color("#FFFFFF"),
+			Border:        lipgloss.Color("#D0D7DE"),
+			RowHighlight:  lipgloss.Color("#F6F8FA"),
+			ColHighlight:  lipgloss.Color("#EAEEF2"),
+			CellHighlight: lipgloss.Color("#0969DA"),
+			SearchMatch:   lipgloss.Color("#9A6700"),
+			Success:       lipgloss.Color("#1A7F37"),
+			Error:         lipgloss.Color("#CF222E"),
+			Warning:       lipgloss.Color("#9A6700"),
+		},
+		"one-light": {
+			Name:          "One Light",
+			Primary:       lipgloss.Color("#A626A4"),
+			Secondary:     lipgloss.Color("#0184BC"),
+			Accent:        lipgloss.Color("#50A14F"),
+			Text:          lipgloss.Color("#383A42"),
+			DimText:       lipgloss.Color("#A0A1A7"),
+			Background:    lipgloss.Color("#FAFAFA"),
+			Border:        lipgloss.Color("#DBDBDC"),
+			RowHighlight:  lipgloss.Color("#F0F0F0"),
+			ColHighlight:  lipgloss.Color("#E5E5E6"),
+			CellHighlight: lipgloss.Color("#4078F2"),
+			SearchMatch:   lipgloss.Color("#C18401"),
+			Success:       lipgloss.Color("#50A14F"),
+			Error:         lipgloss.Color("#E45649"),
+			Warning:       lipgloss.Color("#C18401"),
+		},
 	}
 
 	// currentTheme is the active theme
@@ -134,7 +203,7 @@ var (
 
 // GetThemeNames returns all available theme names
 func GetThemeNames() []string {
-	return []string{"catppuccin", "nord", "rose-pine", "tokyo-night", "gruvbox", "dracula"}
+	return []string{"catppuccin", "nord", "rose-pine", "tokyo-night", "gruvbox", "dracula", "catppuccin-latte", "solarized-light", "github-light", "one-light"}
 }
 
 // SetTheme changes the current theme

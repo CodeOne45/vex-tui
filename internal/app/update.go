@@ -349,6 +349,14 @@ func (m Model) updateTheme(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.applyTheme("gruvbox")
 	case "6":
 		m.applyTheme("dracula")
+	case "7":
+		m.applyTheme("catppuccin-latte")
+	case "8":
+		m.applyTheme("solarized-light")
+	case "9":
+		m.applyTheme("github-light")
+	case "0":
+		m.applyTheme("one-light")
 	}
 	return m, nil
 }

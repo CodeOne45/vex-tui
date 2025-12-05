@@ -347,6 +347,10 @@ func (m Model) renderThemeSelector() string {
 		{"4", "Tokyo Night", "Vibrant cyberpunk vibes"},
 		{"5", "Gruvbox", "Warm retro colors"},
 		{"6", "Dracula", "Classic high contrast"},
+		{"7", "Catppuccin Latte", "Light pastel theme"},
+		{"8", "Solarized Light", "Balanced contrast"},
+		{"9", "GitHub Light", "Clean and minimal"},
+		{"0", "One Light", "Soft Atom colors"},
 	}
 
 	for _, theme := range themes {
@@ -367,7 +371,7 @@ func (m Model) renderThemeSelector() string {
 	content += lipgloss.NewStyle().
 		Foreground(t.DimText).
 		Italic(true).
-		Render("\nPress 1-6 to select, Esc to cancel")
+		Render("\nPress 1-9, 0 to select, Esc to cancel")
 
 	return m.styles.Modal.Width(60).Render(content)
 }
