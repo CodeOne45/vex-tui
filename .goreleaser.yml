@@ -43,8 +43,13 @@ changelog:
 
 brews:
   - name: vex
-    homepage: "https://github.com/CodeOne45/vex"
+    homepage: "https://github.com/CodeOne45/vex-tui"
     description: "Beautiful terminal Excel and CSV viewer with vim-style keybindings"
     license: "MIT"
+
+    repository:
+      owner: CodeOne45
+      name: homebrew-tap
+
     install: |
       bin.install "vex"
