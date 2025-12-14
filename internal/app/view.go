@@ -6,15 +6,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/CodeOne45/vex-tui/internal/theme"
+	"github.com/CodeOne45/vex-tui/internal/ui"
+	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/vex/internal/theme"
-	"github.com/vex/internal/ui"
-	"github.com/vex/pkg/models"
 )
 
-// View renders the current state
 func (m Model) View() string {
-	// Wait for terminal size
 	if m.width == 0 || m.height == 0 {
 		return "Initializing..."
 	}
@@ -36,10 +34,15 @@ func (m Model) View() string {
 		return ui.RenderModal(m.width, m.height, m.renderChart())
 	case models.ModeSelectRange:
 		return m.renderSelectRange()
+	case models.ModeEdit:
+		return m.renderEditMode()
+	case models.ModeSaveAs:
+		return ui.RenderModal(m.width, m.height, m.renderSaveAs())
 	default:
 		return m.renderNormal()
 	}
 }
+
 
 // renderEmpty renders the empty state
 func (m Model) renderEmpty() string {
@@ -347,6 +350,10 @@ func (m Model) renderThemeSelector() string {
 		{"4", "Tokyo Night", "Vibrant cyberpunk vibes"},
 		{"5", "Gruvbox", "Warm retro colors"},
 		{"6", "Dracula", "Classic high contrast"},
+		{"7", "Catppuccin Latte", "Light pastel theme"},
+		{"8", "Solarized Light", "Balanced contrast"},
+		{"9", "GitHub Light", "Clean and minimal"},
+		{"0", "One Light", "Soft Atom colors"},
 	}
 
 	for _, theme := range themes {
@@ -367,7 +374,7 @@ func (m Model) renderThemeSelector() string {
 	content += lipgloss.NewStyle().
 		Foreground(t.DimText).
 		Italic(true).
-		Render("\nPress 1-6 to select, Esc to cancel")
+		Render("\nPress 1-9, 0 to select, Esc to cancel")
 
 	return m.styles.Modal.Width(60).Render(content)
 }
@@ -382,9 +389,9 @@ func (m Model) renderChart() string {
 	types := []string{"1. Bar Chart", "2. Line Chart", "3. Sparkline", "4. Pie Chart"}
 	for i, typ := range types {
 		if i == m.chartType {
-			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("→ " + typ) + "\n"
+			content += lipgloss.NewStyle().Foreground(t.Accent).Bold(true).Render("→ "+typ) + "\n"
 		} else {
-			content += lipgloss.NewStyle().Foreground(t.Text).Render("  " + typ) + "\n"
+			content += lipgloss.NewStyle().Foreground(t.Text).Render("  "+typ) + "\n"
 		}
 	}
 
@@ -409,7 +416,7 @@ func (m Model) renderChart() string {
 
 	// Render chart
 	modalStyle := lipgloss.NewStyle()
-	
+
 	switch m.chartType {
 	case 0: // Bar
 		content += renderBarChart(chartData, modalStyle, t.Accent, t.Text)
@@ -434,7 +441,7 @@ func (m Model) renderChart() string {
 // renderSelectRange renders the selection mode overlay
 func (m Model) renderSelectRange() string {
 	base := m.renderNormal()
-	
+
 	// Add selection info overlay
 	t := theme.GetCurrentTheme()
 	info := lipgloss.NewStyle().
