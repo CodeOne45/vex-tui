@@ -12,9 +12,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// View renders the current state
 func (m Model) View() string {
-	// Wait for terminal size
 	if m.width == 0 || m.height == 0 {
 		return "Initializing..."
 	}
@@ -36,10 +34,15 @@ func (m Model) View() string {
 		return ui.RenderModal(m.width, m.height, m.renderChart())
 	case models.ModeSelectRange:
 		return m.renderSelectRange()
+	case models.ModeEdit:
+		return m.renderEditMode()
+	case models.ModeSaveAs:
+		return ui.RenderModal(m.width, m.height, m.renderSaveAs())
 	default:
 		return m.renderNormal()
 	}
 }
+
 
 // renderEmpty renders the empty state
 func (m Model) renderEmpty() string {

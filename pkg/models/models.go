@@ -28,12 +28,14 @@ const (
 	ModeTheme
 	ModeChart
 	ModeSelectRange
+	ModeEdit
+	ModeSaveAs
 )
 
 // StatusMsg represents a status message with type
 type StatusMsg struct {
 	Message string
-	Type    string // "info", "success", "error", "warning"
+	Type    string
 }
 
 // StatusType constants for type safety

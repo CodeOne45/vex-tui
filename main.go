@@ -10,7 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var version = "1.1.1"
+var version = "2.0.0"
 
 var (
 	showVersion = flag.Bool("version", false, "Show version information")

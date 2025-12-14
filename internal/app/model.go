@@ -22,6 +22,8 @@ type Model struct {
 	searchInput   textinput.Model
 	jumpInput     textinput.Model
 	exportInput   textinput.Model
+	editInput     textinput.Model
+	saveAsInput   textinput.Model
 	searchQuery   string
 	searchResults []models.Cell
 	searchIndex   int
@@ -35,23 +37,26 @@ type Model struct {
 
 	// Chart visualization
 	chartType   int
-	selectStart [2]int // [row, col]
-	selectEnd   [2]int // [row, col]
+	selectStart [2]int
+	selectEnd   [2]int
 	isSelecting bool
+
+	// Edit mode
+	isEditing   bool
+	modified    bool
+	fileFormat  string
+	quitConfirm bool
 }
 
 // NewModel creates a new application model
 func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
-	// Set theme
 	if !theme.SetTheme(themeName) {
 		theme.SetTheme("catppuccin")
 		themeName = "catppuccin"
 	}
 
-	// Initialize styles
 	styles := ui.InitStyles()
 
-	// Create input fields
 	searchInput := textinput.New()
 	searchInput.Placeholder = "search..."
 	searchInput.CharLimit = 100
@@ -67,17 +72,35 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	exportInput.CharLimit = 100
 	exportInput.Width = 40
 
+	editInput := textinput.New()
+	editInput.Placeholder = "Enter value or formula"
+	editInput.CharLimit = 1000
+	editInput.Width = 80
+
+	saveAsInput := textinput.New()
+	saveAsInput.Placeholder = "filename.xlsx or .csv"
+	saveAsInput.CharLimit = 200
+	saveAsInput.Width = 40
+
+	fileFormat := "xlsx"
+	if len(filename) > 4 && filename[len(filename)-4:] == ".csv" {
+		fileFormat = "csv"
+	}
+
 	return Model{
 		sheets:       sheets,
 		currentSheet: 0,
 		searchInput:  searchInput,
 		jumpInput:    jumpInput,
 		exportInput:  exportInput,
+		editInput:    editInput,
+		saveAsInput:  saveAsInput,
 		help:         help.New(),
 		keys:         DefaultKeyMap(),
 		filename:     filename,
 		themeName:    themeName,
 		styles:       styles,
+		fileFormat:   fileFormat,
 		status: models.StatusMsg{
 			Message: "Ready • " + theme.GetCurrentTheme().Name,
 			Type:    models.StatusInfo,
@@ -103,14 +126,12 @@ func (m *Model) adjustViewport() {
 	visibleRows := ui.Max(1, m.height-9)
 	visibleCols := ui.Max(1, (m.width-8)/(ui.MinCellWidth+2))
 
-	// Adjust vertical
 	if m.cursorRow < m.offsetRow {
 		m.offsetRow = m.cursorRow
 	} else if m.cursorRow >= m.offsetRow+visibleRows {
 		m.offsetRow = m.cursorRow - visibleRows + 1
 	}
 
-	// Adjust horizontal
 	if m.cursorCol < m.offsetCol {
 		m.offsetCol = m.cursorCol
 	} else if m.cursorCol >= m.offsetCol+visibleCols {

@@ -44,6 +44,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m.updateChart(msg)
 		case models.ModeSelectRange:
 			return m.updateSelectRange(msg)
+		case models.ModeEdit:
+			return m.updateEdit(msg)
+		case models.ModeSaveAs:
+			return m.updateSaveAs(msg)
 		default:
 			return m.updateNormal(msg)
 		}
@@ -65,59 +69,78 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	switch {
 	case key.Matches(msg, m.keys.Quit):
+		if m.modified && !m.quitConfirm {
+			m.quitConfirm = true
+			m.status = models.StatusMsg{
+				Message: "Unsaved changes! Press q again to quit without saving, or Ctrl+S to save",
+				Type:    models.StatusWarning,
+			}
+			return m, nil
+		}
 		return m, tea.Quit
 
 	case key.Matches(msg, m.keys.Up):
+		m.quitConfirm = false
 		if m.cursorRow > 0 {
 			m.cursorRow--
 			m.adjustViewport()
 		}
 
 	case key.Matches(msg, m.keys.Down):
+		m.quitConfirm = false
 		if m.cursorRow < sheet.MaxRows-1 {
 			m.cursorRow++
 			m.adjustViewport()
 		}
 
 	case key.Matches(msg, m.keys.Left):
+		m.quitConfirm = false
 		if m.cursorCol > 0 {
 			m.cursorCol--
 			m.adjustViewport()
 		}
 
 	case key.Matches(msg, m.keys.Right):
+		m.quitConfirm = false
 		if m.cursorCol < sheet.MaxCols-1 {
 			m.cursorCol++
 			m.adjustViewport()
 		}
 
 	case key.Matches(msg, m.keys.PageDown):
+		m.quitConfirm = false
 		visibleRows := ui.Max(1, m.height-9)
 		m.cursorRow = ui.Min(m.cursorRow+visibleRows, sheet.MaxRows-1)
 		m.adjustViewport()
 
 	case key.Matches(msg, m.keys.PageUp):
+		m.quitConfirm = false
 		visibleRows := ui.Max(1, m.height-9)
 		m.cursorRow = ui.Max(m.cursorRow-visibleRows, 0)
 		m.adjustViewport()
 
 	case key.Matches(msg, m.keys.Home):
+		m.quitConfirm = false
 		m.cursorCol = 0
 		m.offsetCol = 0
 
 	case key.Matches(msg, m.keys.End):
+		m.quitConfirm = false
 		m.cursorCol = sheet.MaxCols - 1
 		m.adjustViewport()
 
 	case key.Matches(msg, m.keys.FirstCol):
+		m.quitConfirm = false
 		m.cursorCol = 0
 		m.offsetCol = 0
 
 	case key.Matches(msg, m.keys.LastCol):
+		m.quitConfirm = false
 		m.cursorCol = sheet.MaxCols - 1
 		m.adjustViewport()
 
 	case key.Matches(msg, m.keys.NextSheet):
+		m.quitConfirm = false
 		if m.currentSheet < len(m.sheets)-1 {
 			m.currentSheet++
 			m.resetView()
@@ -128,6 +151,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.PrevSheet):
+		m.quitConfirm = false
 		if m.currentSheet > 0 {
 			m.currentSheet--
 			m.resetView()
@@ -138,6 +162,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.Search):
+		m.quitConfirm = false
 		m.mode = models.ModeSearch
 		m.searchInput.Focus()
 		m.searchInput.SetValue(m.searchQuery)
@@ -145,6 +170,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, textinput.Blink
 
 	case key.Matches(msg, m.keys.NextResult):
+		m.quitConfirm = false
 		if len(m.searchResults) > 0 {
 			m.searchIndex = (m.searchIndex + 1) % len(m.searchResults)
 			m.jumpToSearchResult()
@@ -155,6 +181,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.PrevResult):
+		m.quitConfirm = false
 		if len(m.searchResults) > 0 {
 			m.searchIndex = (m.searchIndex - 1 + len(m.searchResults)) % len(m.searchResults)
 			m.jumpToSearchResult()
@@ -165,6 +192,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.ClearSearch):
+		m.quitConfirm = false
 		if m.searchQuery != "" {
 			m.searchQuery = ""
 			m.searchResults = nil
@@ -173,16 +201,19 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.Detail):
+		m.quitConfirm = false
 		m.mode = models.ModeDetail
 		return m, nil
 
 	case key.Matches(msg, m.keys.Jump):
+		m.quitConfirm = false
 		m.mode = models.ModeJump
 		m.jumpInput.Focus()
 		m.jumpInput.SetValue("")
 		return m, textinput.Blink
 
 	case key.Matches(msg, m.keys.ToggleForm):
+		m.quitConfirm = false
 		m.showFormulas = !m.showFormulas
 		if m.showFormulas {
 			m.status = models.StatusMsg{Message: "Showing formulas", Type: models.StatusInfo}
@@ -191,26 +222,32 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 	case key.Matches(msg, m.keys.Copy):
+		m.quitConfirm = false
 		m.copyCell()
 
 	case key.Matches(msg, m.keys.CopyRow):
+		m.quitConfirm = false
 		m.copyRow()
 
 	case key.Matches(msg, m.keys.Export):
+		m.quitConfirm = false
 		m.mode = models.ModeExport
 		m.exportInput.Focus()
 		m.exportInput.SetValue("")
 		return m, textinput.Blink
 
 	case key.Matches(msg, m.keys.Theme):
+		m.quitConfirm = false
 		m.mode = models.ModeTheme
 		return m, nil
 
 	case key.Matches(msg, m.keys.Help):
+		m.quitConfirm = false
 		m.help.ShowAll = !m.help.ShowAll
 		return m, nil
 
 	case key.Matches(msg, m.keys.Visualize):
+		m.quitConfirm = false
 		if !m.isSelecting {
 			m.status = models.StatusMsg{Message: "Select range first (V)", Type: models.StatusWarning}
 		} else {
@@ -220,6 +257,7 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case key.Matches(msg, m.keys.SelectRange):
+		m.quitConfirm = false
 		if !m.isSelecting {
 			m.selectStart = [2]int{m.cursorRow, m.cursorCol}
 			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
@@ -228,13 +266,65 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		} else {
 			m.selectEnd = [2]int{m.cursorRow, m.cursorCol}
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("Selected %dx%d range - Press v to visualize",
+				Message: fmt.Sprintf("Selected %dx%d range - Press v to visualize or Ctrl+A to apply formula",
 					abs(m.selectEnd[0]-m.selectStart[0])+1,
 					abs(m.selectEnd[1]-m.selectStart[1])+1),
 				Type: models.StatusSuccess,
 			}
 		}
 		return m, nil
+
+	case key.Matches(msg, m.keys.Edit):
+		m.quitConfirm = false
+		m.startEdit()
+		return m, textinput.Blink
+
+	case key.Matches(msg, m.keys.Delete):
+		m.quitConfirm = false
+		m.deleteCell()
+
+	case key.Matches(msg, m.keys.DeleteRow):
+		m.quitConfirm = false
+		m.deleteRow()
+
+	case key.Matches(msg, m.keys.DeleteCol):
+		m.quitConfirm = false
+		m.deleteColumn()
+
+	case key.Matches(msg, m.keys.InsertRow):
+		m.quitConfirm = false
+		m.insertRow()
+
+	case key.Matches(msg, m.keys.InsertCol):
+		m.quitConfirm = false
+		m.insertColumn()
+
+	case key.Matches(msg, m.keys.Paste):
+		m.quitConfirm = false
+		m.pasteCell()
+
+	case key.Matches(msg, m.keys.Save):
+		m.quitConfirm = false
+		m.saveFile()
+
+	case key.Matches(msg, m.keys.SaveAs):
+		m.quitConfirm = false
+		m.mode = models.ModeSaveAs
+		m.saveAsInput.Focus()
+		m.saveAsInput.SetValue(m.filename)
+		return m, textinput.Blink
+
+	case key.Matches(msg, m.keys.FillDown):
+		m.quitConfirm = false
+		m.fillDown()
+
+	case key.Matches(msg, m.keys.FillRight):
+		m.quitConfirm = false
+		m.fillRight()
+
+	case key.Matches(msg, m.keys.ApplyFormula):
+		m.quitConfirm = false
+		m.applyFormulaToRange()
 	}
 
 	return m, nil
@@ -378,23 +468,20 @@ func (m *Model) jumpToCell(input string) {
 	sheet := m.sheets[m.currentSheet]
 	input = strings.ToUpper(strings.TrimSpace(input))
 
-	// Format: "A100" (column letter + row number)
 	if len(input) > 0 && input[0] >= 'A' && input[0] <= 'Z' {
 		col := 0
 		row := 0
 		i := 0
 
-		// Parse column letters
 		for i < len(input) && input[i] >= 'A' && input[i] <= 'Z' {
 			col = col*26 + int(input[i]-'A') + 1
 			i++
 		}
-		col-- // Convert to 0-indexed
+		col--
 
-		// Parse row number
 		if i < len(input) {
 			if r, err := strconv.Atoi(input[i:]); err == nil {
-				row = r - 1 // Convert to 0-indexed
+				row = r - 1
 			}
 		}
 
@@ -410,9 +497,8 @@ func (m *Model) jumpToCell(input string) {
 		}
 	}
 
-	// Format: "500" (row number only)
 	if row, err := strconv.Atoi(input); err == nil {
-		row-- // Convert to 0-indexed
+		row--
 		if row >= 0 && row < sheet.MaxRows {
 			m.cursorRow = row
 			m.centerView()
@@ -424,12 +510,11 @@ func (m *Model) jumpToCell(input string) {
 		}
 	}
 
-	// Format: "10,5" (row,col)
 	if parts := strings.Split(input, ","); len(parts) == 2 {
 		if row, err1 := strconv.Atoi(strings.TrimSpace(parts[0])); err1 == nil {
 			if col, err2 := strconv.Atoi(strings.TrimSpace(parts[1])); err2 == nil {
-				row-- // Convert to 0-indexed
-				col-- // Convert to 0-indexed
+				row--
+				col--
 				if row >= 0 && row < sheet.MaxRows && col >= 0 && col < sheet.MaxCols {
 					m.cursorRow = row
 					m.cursorCol = col
@@ -524,13 +609,13 @@ func (m Model) updateChart(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "esc", "q":
 		m.mode = models.ModeNormal
 	case "1":
-		m.chartType = 0 // Bar
+		m.chartType = 0
 	case "2":
-		m.chartType = 1 // Line
+		m.chartType = 1
 	case "3":
-		m.chartType = 2 // Sparkline
+		m.chartType = 2
 	case "4":
-		m.chartType = 3 // Pie
+		m.chartType = 3
 	}
 	return m, nil
 }
@@ -567,7 +652,7 @@ func (m Model) updateSelectRange(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.SelectRange):
 		m.mode = models.ModeNormal
 		m.status = models.StatusMsg{
-			Message: "Selected range - Press v to visualize",
+			Message: "Selected range - Press v to visualize or Ctrl+A to apply formula",
 			Type:    models.StatusSuccess,
 		}
 	case msg.Type == tea.KeyEscape:
