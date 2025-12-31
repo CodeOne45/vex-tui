@@ -10,10 +10,11 @@ type Cell struct {
 
 // Sheet represents a worksheet with its data
 type Sheet struct {
-	Name    string
-	Rows    [][]Cell
-	MaxRows int
-	MaxCols int
+	Name      string
+	Rows      [][]Cell
+	MaxRows   int
+	MaxCols   int
+	ColWidths map[int]int
 }
 
 // Mode represents the current application mode

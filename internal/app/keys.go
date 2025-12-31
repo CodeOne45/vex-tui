@@ -43,6 +43,8 @@ type KeyMap struct {
 	FillDown     key.Binding
 	FillRight    key.Binding
 	ApplyFormula key.Binding
+	ColWidthInc  key.Binding
+	ColWidthDec  key.Binding
 }
 
 // ShortHelp returns key bindings to be shown in the mini help view
@@ -108,5 +110,7 @@ func DefaultKeyMap() KeyMap {
 		FillDown:     key.NewBinding(key.WithKeys("ctrl+j"), key.WithHelp("^j", "fill down")),
 		FillRight:    key.NewBinding(key.WithKeys("ctrl+l"), key.WithHelp("^l", "fill right")),
 		ApplyFormula: key.NewBinding(key.WithKeys("ctrl+a"), key.WithHelp("^a", "apply formula")),
+		ColWidthInc:  key.NewBinding(key.WithKeys(">"), key.WithHelp(">", "widen col")),
+		ColWidthDec:  key.NewBinding(key.WithKeys("<"), key.WithHelp("<", "narrow col")),
 	}
 }
