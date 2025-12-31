@@ -124,6 +124,7 @@ func (m Model) renderFormulaBar() string {
 }
 
 // renderTable renders the spreadsheet table
+// renderTable renders the spreadsheet table
 func (m Model) renderTable() string {
 	sheet := m.sheets[m.currentSheet]
 	visibleRows := ui.Max(1, m.height-9)
@@ -137,12 +138,20 @@ func (m Model) renderTable() string {
 	b.WriteString(sep)
 
 	for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
-		colLetter := ui.ColIndexToLetter(col)
-		if col == m.cursorCol {
-			b.WriteString(m.styles.HeaderHighlight.Render(ui.PadCenter(colLetter, ui.MinCellWidth)))
-		} else {
-			b.WriteString(m.styles.Header.Render(ui.PadCenter(colLetter, ui.MinCellWidth)))
+		width := ui.MinCellWidth
+		if w, ok := sheet.ColWidths[col]; ok && w > 0 {
+			width = w
 		}
+
+		colLetter := ui.ColIndexToLetter(col)
+		headerStyle := m.styles.Header
+		if col == m.cursorCol {
+			headerStyle = m.styles.HeaderHighlight
+		}
+		
+		// Adjust style width
+		headerStyle = headerStyle.Width(width)
+		b.WriteString(headerStyle.Render(ui.PadCenter(colLetter, width)))
 		b.WriteString(sep)
 	}
 	b.WriteString("\n")
@@ -162,6 +171,10 @@ func (m Model) renderTable() string {
 		if row < len(sheet.Rows) {
 			for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
 				cellText := ""
+				width := ui.MinCellWidth
+				if w, ok := sheet.ColWidths[col]; ok && w > 0 {
+					width = w
+				}
 
 				if col < len(sheet.Rows[row]) {
 					cell := sheet.Rows[row][col]
@@ -172,7 +185,7 @@ func (m Model) renderTable() string {
 					}
 				}
 
-				cellText = ui.TruncateToWidth(cellText, ui.MinCellWidth)
+				cellText = ui.TruncateToWidth(cellText, width)
 
 				// Determine style
 				var style lipgloss.Style
@@ -182,8 +195,8 @@ func (m Model) renderTable() string {
 					// Highlight selection with different color
 					style = lipgloss.NewStyle().
 						Foreground(theme.GetCurrentTheme().Text).
-						Background(theme.GetCurrentTheme().Secondary).
-						Width(ui.MinCellWidth)
+						Background(theme.GetCurrentTheme().Secondary)
+
 				} else if m.isSearchMatch(row, col) {
 					style = m.styles.SearchMatch
 				} else if row == m.cursorRow {
@@ -193,13 +206,19 @@ func (m Model) renderTable() string {
 				} else {
 					style = m.styles.Cell
 				}
-
+				
+				style = style.Width(width)
 				b.WriteString(style.Render(cellText))
 				b.WriteString(sep)
 			}
 		} else {
 			// Empty row
 			for col := m.offsetCol; col < ui.Min(m.offsetCol+visibleCols, sheet.MaxCols); col++ {
+				width := ui.MinCellWidth
+				if w, ok := sheet.ColWidths[col]; ok && w > 0 {
+					width = w
+				}
+
 				var style lipgloss.Style
 				if row == m.cursorRow && col == m.cursorCol {
 					style = m.styles.SelectedCell
@@ -210,7 +229,8 @@ func (m Model) renderTable() string {
 				} else {
 					style = m.styles.Cell
 				}
-				b.WriteString(style.Render(strings.Repeat(" ", ui.MinCellWidth)))
+				style = style.Width(width)
+				b.WriteString(style.Render(strings.Repeat(" ", width)))
 				b.WriteString(sep)
 			}
 		}

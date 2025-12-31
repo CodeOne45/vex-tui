@@ -325,6 +325,42 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.ApplyFormula):
 		m.quitConfirm = false
 		m.applyFormulaToRange()
+
+	case key.Matches(msg, m.keys.ColWidthInc):
+		m.quitConfirm = false
+		if sheet.ColWidths == nil {
+			sheet.ColWidths = make(map[int]int)
+			m.sheets[m.currentSheet] = sheet
+		}
+		width := sheet.ColWidths[m.cursorCol]
+		if width == 0 {
+			width = ui.MinCellWidth
+		}
+		if width < ui.MaxCellWidth {
+			sheet.ColWidths[m.cursorCol] = width + 1
+			m.status = models.StatusMsg{
+				Message: fmt.Sprintf("Width: %d", width+1),
+				Type:    models.StatusInfo,
+			}
+		}
+
+	case key.Matches(msg, m.keys.ColWidthDec):
+		m.quitConfirm = false
+		if sheet.ColWidths == nil {
+			sheet.ColWidths = make(map[int]int)
+			m.sheets[m.currentSheet] = sheet
+		}
+		width := sheet.ColWidths[m.cursorCol]
+		if width == 0 {
+			width = ui.MinCellWidth
+		}
+		if width > 2 {
+			sheet.ColWidths[m.cursorCol] = width - 1
+			m.status = models.StatusMsg{
+				Message: fmt.Sprintf("Width: %d", width-1),
+				Type:    models.StatusInfo,
+			}
+		}
 	}
 
 	return m, nil
