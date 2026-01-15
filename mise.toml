@@ -1,0 +1,7 @@
+[tools]
+go = "latest"
+
+[tasks]
+setup = "go mod download"
+build = "go build -o vex ."
+deploy = "go install"
