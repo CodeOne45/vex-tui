@@ -10,12 +10,13 @@ import (
 	"github.com/CodeOne45/vex-tui/internal/ui"
 	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 // updateEdit handles edit mode updates
+// Enter adds newlines. Use Ctrl+S or Tab to confirm, Esc to cancel.
 func (m Model) updateEdit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
@@ -26,7 +27,7 @@ func (m Model) updateEdit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.isEditing = false
 		return m, nil
 
-	case tea.KeyEnter:
+	case tea.KeyCtrlS:
 		m.commitEdit()
 		m.mode = models.ModeNormal
 		m.editInput.Blur()
@@ -44,7 +45,7 @@ func (m Model) updateEdit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 		m.adjustViewport()
 		m.startEdit()
-		return m, textinput.Blink
+		return m, textarea.Blink
 
 	case tea.KeyShiftTab:
 		m.commitEdit()
@@ -57,7 +58,7 @@ func (m Model) updateEdit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 		m.adjustViewport()
 		m.startEdit()
-		return m, textinput.Blink
+		return m, textarea.Blink
 
 	case tea.KeyCtrlC:
 		m.mode = models.ModeNormal
@@ -98,8 +99,9 @@ func (m *Model) startEdit() {
 	}
 
 	m.editInput.SetValue(value)
-	m.editInput.CursorEnd()
 	m.editInput.Focus()
+	// Move cursor to end
+	m.editInput.CursorEnd()
 	m.isEditing = true
 	m.mode = models.ModeEdit
 	m.modified = true
@@ -108,7 +110,9 @@ func (m *Model) startEdit() {
 // commitEdit saves the current edit to the cell
 func (m *Model) commitEdit() {
 	sheet := &m.sheets[m.currentSheet]
-	value := strings.TrimSpace(m.editInput.Value())
+	value := m.editInput.Value()
+	// Trim leading/trailing whitespace but preserve internal newlines
+	value = strings.TrimRight(strings.TrimLeft(value, " \t"), " \t\r")
 
 	if m.cursorRow >= len(sheet.Rows) {
 		for i := len(sheet.Rows); i <= m.cursorRow; i++ {
@@ -584,7 +588,11 @@ func (m Model) renderEditMode() string {
 		Background(t.Border).
 		Foreground(t.Text).
 		Padding(0, 2).
-		Render(cellRef + ": " + m.editInput.View())
+		Render(cellRef + ":")
+
+	hint := lipgloss.NewStyle().
+		Foreground(t.DimText).
+		Render(" Ctrl+S: save | Esc: cancel | Enter: newline")
 
 	modifiedIndicator := ""
 	if m.modified {
@@ -594,9 +602,9 @@ func (m Model) renderEditMode() string {
 			Render(" [Modified]")
 	}
 
-	info := lipgloss.JoinHorizontal(lipgloss.Top, editInfo, cellInfo, modifiedIndicator)
+	header := lipgloss.JoinHorizontal(lipgloss.Top, editInfo, cellInfo, hint, modifiedIndicator)
 
-	return base + "\n" + info
+	return base + "\n" + header + "\n" + m.editInput.View()
 }
 
 // renderSaveAs renders the save as modal

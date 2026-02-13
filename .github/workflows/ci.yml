@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ['1.21', '1.22']
+        go-version: ['1.24']
 
     steps:
     - name: Check out code
@@ -34,12 +34,12 @@ jobs:
       run: go test -v ./...
 
     - name: Run tests with coverage
-      if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.22'
-      run: go test -coverprofile=coverage.out -covermode=atomic ./...
+      if: matrix.os == 'ubuntu-latest'
+      run: go test -coverprofile=coverage.out ./...
 
     - name: Upload coverage
-      if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.22'
-      uses: codecov/codecov-action@v3
+      if: matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v4
       with:
         files: ./coverage.out
         flags: unittests
@@ -55,7 +55,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.24'
 
     - name: Build
       run: go build -v .
@@ -79,7 +79,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.24'
 
     - name: Run go fmt
       run: |

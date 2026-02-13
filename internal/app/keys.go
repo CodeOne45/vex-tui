@@ -12,6 +12,8 @@ type KeyMap struct {
 	PageDown     key.Binding
 	Home         key.Binding
 	End          key.Binding
+	GotoTop      key.Binding
+	GotoBottom   key.Binding
 	FirstCol     key.Binding
 	LastCol      key.Binding
 	NextSheet    key.Binding
@@ -56,15 +58,15 @@ func (k KeyMap) ShortHelp() []key.Binding {
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Left, k.Right},
-		{k.PageUp, k.PageDown, k.FirstCol, k.LastCol},
-		{k.Home, k.End, k.NextSheet, k.PrevSheet},
+		{k.PageUp, k.PageDown, k.GotoTop, k.GotoBottom},
+		{k.FirstCol, k.LastCol, k.NextSheet, k.PrevSheet},
 		{k.Edit, k.Delete, k.Copy, k.Paste},
 		{k.InsertRow, k.InsertCol, k.DeleteRow, k.DeleteCol},
 		{k.FillDown, k.FillRight, k.ApplyFormula, k.ToggleForm},
 		{k.Search, k.NextResult, k.PrevResult, k.ClearSearch},
 		{k.Detail, k.Jump, k.Export, k.Theme},
 		{k.Save, k.SaveAs, k.Visualize, k.SelectRange},
-		{k.Help, k.Quit},
+		{k.ColWidthInc, k.ColWidthDec, k.Help, k.Quit},
 	}
 }
 
@@ -79,8 +81,10 @@ func DefaultKeyMap() KeyMap {
 		PageDown:     key.NewBinding(key.WithKeys("pgdown", "ctrl+d"), key.WithHelp("pgdn/^d", "page down")),
 		Home:         key.NewBinding(key.WithKeys("home", "0"), key.WithHelp("home/0", "row start")),
 		End:          key.NewBinding(key.WithKeys("end", "$"), key.WithHelp("end/$", "row end")),
-		FirstCol:     key.NewBinding(key.WithKeys("g"), key.WithHelp("g", "first col")),
-		LastCol:      key.NewBinding(key.WithKeys("G"), key.WithHelp("G", "last col")),
+		GotoTop:      key.NewBinding(key.WithKeys("g", "g"), key.WithHelp("gg", "go to top")),
+		GotoBottom:   key.NewBinding(key.WithKeys("G"), key.WithHelp("G", "go to bottom")),
+		FirstCol:     key.NewBinding(key.WithKeys("home", "0"), key.WithHelp("home/0", "row start")),
+		LastCol:      key.NewBinding(key.WithKeys("end", "$"), key.WithHelp("end/$", "row end")),
 		NextSheet:    key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "next sheet")),
 		PrevSheet:    key.NewBinding(key.WithKeys("shift+tab"), key.WithHelp("⇧tab", "prev sheet")),
 		Search:       key.NewBinding(key.WithKeys("/"), key.WithHelp("/", "search")),
@@ -100,8 +104,8 @@ func DefaultKeyMap() KeyMap {
 		SelectRange:  key.NewBinding(key.WithKeys("V"), key.WithHelp("V", "select")),
 		Edit:         key.NewBinding(key.WithKeys("i"), key.WithHelp("i", "edit")),
 		Delete:       key.NewBinding(key.WithKeys("x"), key.WithHelp("x", "delete cell")),
-		DeleteRow:    key.NewBinding(key.WithKeys("d", "d"), key.WithHelp("dd", "delete row")),
-		DeleteCol:    key.NewBinding(key.WithKeys("d", "c"), key.WithHelp("dc", "delete col")),
+		DeleteRow:    key.NewBinding(key.WithKeys("d"), key.WithHelp("dd", "delete row")),
+		DeleteCol:    key.NewBinding(key.WithKeys("d"), key.WithHelp("dc", "delete col")),
 		InsertRow:    key.NewBinding(key.WithKeys("o"), key.WithHelp("o", "insert row")),
 		InsertCol:    key.NewBinding(key.WithKeys("O"), key.WithHelp("O", "insert col")),
 		Paste:        key.NewBinding(key.WithKeys("p"), key.WithHelp("p", "paste")),

@@ -5,6 +5,29 @@ All notable changes to Vex will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2025-02-13
+
+### Fixed
+
+- **Excel file crash**: Updated excelize library from v2.8.0 to v2.10.0, fixing `panic: index out of range` when opening certain Excel files
+- **Delete row/column shortcuts**: `dd` (delete row) and `dc` (delete column) now work correctly as two-key sequences instead of `d` immediately deleting a row
+- **Help shortcut**: Pressing `?` now properly toggles the full help view showing all keybindings
+- **CLI `-h` flag**: Added `-h` as shorthand for `--help` so both `-h` and `--help` work
+- **Multiline cell display**: Cells containing newlines now show `↵` indicators in grid view instead of collapsing to spaces
+- **Multiline cell editing**: Edit mode now uses a multi-line text area, preserving newlines in cell values (Enter adds newline, Ctrl+S confirms edit)
+- **CI pipeline**: Fixed Go version compatibility and coverage tool errors
+
+### Added
+
+- **Copy selected range**: Press `V` to select a range, then `c` to copy it (tab-separated columns, newline-separated rows)
+- **Vim-style file navigation**: `gg` jumps to top of file, `G` jumps to bottom of file (previously these only moved between columns)
+
+### Changed
+
+- Minimum Go version bumped to 1.24 (required by excelize v2.10.0)
+- Release workflow now uses GoReleaser for automated GitHub releases and Homebrew formula updates
+- Edit mode keybindings: Enter inserts newline, Ctrl+S saves edit, Esc cancels
+
 ## [2.0.1] - 2024-12-14
 
 ### Fixed
@@ -240,6 +263,8 @@ This is a major release that transforms Vex from a viewer into a full-featured t
 - Vim-style navigation
 - Multiple sheet support
 
+[2.0.2]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.2
+[2.0.1]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.1
 [2.0.0]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.0
 [1.1.1]: https://github.com/CodeOne45/vex-tui/releases/tag/v1.1.1
 [1.1.0]: https://github.com/CodeOne45/vex-tui/releases/tag/v1.1.0

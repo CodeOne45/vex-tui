@@ -43,7 +43,6 @@ func (m Model) View() string {
 	}
 }
 
-
 // renderEmpty renders the empty state
 func (m Model) renderEmpty() string {
 	var b strings.Builder
@@ -91,7 +90,7 @@ func (m Model) renderNormal() string {
 
 	// Help
 	b.WriteString("\n")
-	b.WriteString(m.styles.Help.Render(m.help.ShortHelpView(m.keys.ShortHelp())))
+	b.WriteString(m.styles.Help.Render(m.help.View(m.keys)))
 
 	return b.String()
 }
@@ -148,7 +147,7 @@ func (m Model) renderTable() string {
 		if col == m.cursorCol {
 			headerStyle = m.styles.HeaderHighlight
 		}
-		
+
 		// Adjust style width
 		headerStyle = headerStyle.Width(width)
 		b.WriteString(headerStyle.Render(ui.PadCenter(colLetter, width)))
@@ -206,7 +205,7 @@ func (m Model) renderTable() string {
 				} else {
 					style = m.styles.Cell
 				}
-				
+
 				style = style.Width(width)
 				b.WriteString(style.Render(cellText))
 				b.WriteString(sep)

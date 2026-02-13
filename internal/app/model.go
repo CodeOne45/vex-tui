@@ -5,6 +5,7 @@ import (
 	"github.com/CodeOne45/vex-tui/internal/ui"
 	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 )
 
@@ -22,7 +23,7 @@ type Model struct {
 	searchInput   textinput.Model
 	jumpInput     textinput.Model
 	exportInput   textinput.Model
-	editInput     textinput.Model
+	editInput     textarea.Model
 	saveAsInput   textinput.Model
 	searchQuery   string
 	searchResults []models.Cell
@@ -46,6 +47,9 @@ type Model struct {
 	modified    bool
 	fileFormat  string
 	quitConfirm bool
+
+	// Pending key for multi-key sequences (dd, dc, gg)
+	pendingKey string
 }
 
 // NewModel creates a new application model
@@ -72,10 +76,12 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	exportInput.CharLimit = 100
 	exportInput.Width = 40
 
-	editInput := textinput.New()
+	editInput := textarea.New()
 	editInput.Placeholder = "Enter value or formula"
 	editInput.CharLimit = 1000
-	editInput.Width = 80
+	editInput.SetWidth(80)
+	editInput.SetHeight(3)
+	editInput.ShowLineNumbers = false
 
 	saveAsInput := textinput.New()
 	saveAsInput.Placeholder = "filename.xlsx or .csv"

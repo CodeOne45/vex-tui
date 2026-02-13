@@ -2,9 +2,9 @@
 
 A beautiful, fast, and feature-rich terminal-based Excel and CSV editor with vim-style keybindings and formula support.
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.1-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
+[![Version](https://img.shields.io/badge/version-2.0.2-brightgreen.svg)](https://github.com/CodeOne45/vex-tui/releases)
 
 ![Vex Demo](assets/vex-demo.gif)
 

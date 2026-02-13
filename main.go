@@ -10,15 +10,17 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var version = "2.0.1"
+var version = "2.0.2"
 
 var (
 	showVersion = flag.Bool("version", false, "Show version information")
-	showHelp    = flag.Bool("help", false, "Show help information")
+	showHelp    = new(bool)
 	themeName   = flag.String("theme", "catppuccin", "Set the color theme")
 )
 
 func main() {
+	flag.BoolVar(showHelp, "help", false, "Show help information")
+	flag.BoolVar(showHelp, "h", false, "Show help information (shorthand)")
 	flag.StringVar(themeName, "t", "catppuccin", "Set the color theme (shorthand)")
 	flag.Parse()
 

@@ -177,8 +177,9 @@ func Truncate(s string, maxLen int) string {
 
 // TruncateToWidth ensures text fits exactly in the cell width
 func TruncateToWidth(s string, width int) string {
-	// Remove any newlines or tabs that would break layout
-	s = strings.ReplaceAll(s, "\n", " ")
+	// Replace newlines with visible indicator, tabs/CR with spaces
+	s = strings.ReplaceAll(s, "\r\n", "↵")
+	s = strings.ReplaceAll(s, "\n", "↵")
 	s = strings.ReplaceAll(s, "\t", " ")
 	s = strings.ReplaceAll(s, "\r", " ")
 
@@ -208,28 +209,32 @@ func PadCenter(s string, width int) string {
 	return strings.Repeat(" ", leftPad) + s + strings.Repeat(" ", rightPad)
 }
 
-// WrapText wraps text to fit within a specified width
+// WrapText wraps text to fit within a specified width, preserving existing newlines
 func WrapText(text string, width int) string {
-	if len(text) <= width {
-		return text
-	}
-
+	// Split by existing newlines first to preserve them
+	lines := strings.Split(text, "\n")
 	var result strings.Builder
-	words := strings.Fields(text)
-	lineLen := 0
 
-	for i, word := range words {
-		wordLen := len(word)
-		if lineLen+wordLen+1 > width {
+	for li, line := range lines {
+		if li > 0 {
 			result.WriteString("\n")
-			lineLen = 0
 		}
-		if i > 0 && lineLen > 0 {
-			result.WriteString(" ")
-			lineLen++
+		// Wrap each line independently
+		words := strings.Fields(line)
+		lineLen := 0
+		for i, word := range words {
+			wordLen := len(word)
+			if lineLen+wordLen+1 > width && lineLen > 0 {
+				result.WriteString("\n")
+				lineLen = 0
+			}
+			if i > 0 && lineLen > 0 {
+				result.WriteString(" ")
+				lineLen++
+			}
+			result.WriteString(word)
+			lineLen += wordLen
 		}
-		result.WriteString(word)
-		lineLen += wordLen
 	}
 
 	return result.String()

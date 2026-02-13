@@ -10,6 +10,7 @@ import (
 	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -66,6 +67,52 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	sheet := m.sheets[m.currentSheet]
+
+	// Handle pending key sequences (dd, dc, gg)
+	if m.pendingKey != "" {
+		pending := m.pendingKey
+		m.pendingKey = ""
+		k := msg.String()
+
+		switch pending {
+		case "d":
+			switch k {
+			case "d":
+				m.quitConfirm = false
+				m.deleteRow()
+				return m, nil
+			case "c":
+				m.quitConfirm = false
+				m.deleteColumn()
+				return m, nil
+			}
+			// Not a valid sequence, ignore
+			return m, nil
+		case "g":
+			if k == "g" {
+				m.quitConfirm = false
+				m.cursorRow = 0
+				m.cursorCol = 0
+				m.offsetRow = 0
+				m.offsetCol = 0
+				m.status = models.StatusMsg{Message: "Top of file", Type: models.StatusInfo}
+				return m, nil
+			}
+			// Not a valid sequence, ignore
+			return m, nil
+		}
+		return m, nil
+	}
+
+	// Check for pending key triggers
+	switch msg.String() {
+	case "d":
+		m.pendingKey = "d"
+		return m, nil
+	case "g":
+		m.pendingKey = "g"
+		return m, nil
+	}
 
 	switch {
 	case key.Matches(msg, m.keys.Quit):
@@ -129,15 +176,11 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.cursorCol = sheet.MaxCols - 1
 		m.adjustViewport()
 
-	case key.Matches(msg, m.keys.FirstCol):
+	case key.Matches(msg, m.keys.GotoBottom):
 		m.quitConfirm = false
-		m.cursorCol = 0
-		m.offsetCol = 0
-
-	case key.Matches(msg, m.keys.LastCol):
-		m.quitConfirm = false
-		m.cursorCol = sheet.MaxCols - 1
+		m.cursorRow = sheet.MaxRows - 1
 		m.adjustViewport()
+		m.status = models.StatusMsg{Message: "Bottom of file", Type: models.StatusInfo}
 
 	case key.Matches(msg, m.keys.NextSheet):
 		m.quitConfirm = false
@@ -223,7 +266,11 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.Copy):
 		m.quitConfirm = false
-		m.copyCell()
+		if m.isSelecting {
+			m.copyRange()
+		} else {
+			m.copyCell()
+		}
 
 	case key.Matches(msg, m.keys.CopyRow):
 		m.quitConfirm = false
@@ -277,19 +324,11 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.Edit):
 		m.quitConfirm = false
 		m.startEdit()
-		return m, textinput.Blink
+		return m, textarea.Blink
 
 	case key.Matches(msg, m.keys.Delete):
 		m.quitConfirm = false
 		m.deleteCell()
-
-	case key.Matches(msg, m.keys.DeleteRow):
-		m.quitConfirm = false
-		m.deleteRow()
-
-	case key.Matches(msg, m.keys.DeleteCol):
-		m.quitConfirm = false
-		m.deleteColumn()
 
 	case key.Matches(msg, m.keys.InsertRow):
 		m.quitConfirm = false
@@ -605,6 +644,46 @@ func (m *Model) copyRow() {
 				Message: fmt.Sprintf("Copied row %d (%d cells)", m.cursorRow+1, len(values)),
 				Type:    models.StatusSuccess,
 			}
+		}
+	}
+}
+
+// copyRange copies the selected range to clipboard (tab-separated columns, newline-separated rows)
+func (m *Model) copyRange() {
+	sheet := m.sheets[m.currentSheet]
+
+	startRow := m.selectStart[0]
+	endRow := m.selectEnd[0]
+	startCol := m.selectStart[1]
+	endCol := m.selectEnd[1]
+
+	if startRow > endRow {
+		startRow, endRow = endRow, startRow
+	}
+	if startCol > endCol {
+		startCol, endCol = endCol, startCol
+	}
+
+	var rows []string
+	for row := startRow; row <= endRow && row < len(sheet.Rows); row++ {
+		var cells []string
+		for col := startCol; col <= endCol; col++ {
+			if col < len(sheet.Rows[row]) {
+				cells = append(cells, sheet.Rows[row][col].Value)
+			} else {
+				cells = append(cells, "")
+			}
+		}
+		rows = append(rows, strings.Join(cells, "\t"))
+	}
+
+	rangeText := strings.Join(rows, "\n")
+	if err := clipboard.WriteAll(rangeText); err != nil {
+		m.status = models.StatusMsg{Message: "Failed to copy range", Type: models.StatusError}
+	} else {
+		m.status = models.StatusMsg{
+			Message: fmt.Sprintf("Copied %dx%d range", endRow-startRow+1, endCol-startCol+1),
+			Type:    models.StatusSuccess,
 		}
 	}
 }
