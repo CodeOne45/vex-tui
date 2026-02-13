@@ -19,12 +19,10 @@ func SaveExcel(sheets []models.Sheet, filename string) error {
 	}()
 
 	for idx, sheet := range sheets {
-		var sheetName string
+		sheetName := sheet.Name
 		if idx == 0 {
-			sheetName = "Sheet1"
-			f.SetSheetName("Sheet1", sheet.Name)
+			f.SetSheetName("Sheet1", sheetName)
 		} else {
-			sheetName = sheet.Name
 			_, err := f.NewSheet(sheetName)
 			if err != nil {
 				return fmt.Errorf("failed to create sheet %s: %w", sheetName, err)
