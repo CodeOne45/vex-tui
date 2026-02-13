@@ -3,6 +3,7 @@ version: 2
 before:
   hooks:
     - go mod tidy
+    - go test ./...
 
 builds:
   - env:
@@ -47,9 +48,12 @@ brews:
     description: "Beautiful terminal Excel and CSV viewer with vim-style keybindings"
     license: "MIT"
 
+    skip_upload: "{{ if .Env.HOMEBREW_TAP_TOKEN }}false{{ else }}true{{ end }}"
+
     repository:
       owner: CodeOne45
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
 
     install: |
       bin.install "vex"
