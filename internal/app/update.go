@@ -365,6 +365,14 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.quitConfirm = false
 		m.applyFormulaToRange()
 
+	case key.Matches(msg, m.keys.SortAsc):
+		m.quitConfirm = false
+		m.sortByCurrentColumn(true)
+
+	case key.Matches(msg, m.keys.SortDesc):
+		m.quitConfirm = false
+		m.sortByCurrentColumn(false)
+
 	case key.Matches(msg, m.keys.ColWidthInc):
 		m.quitConfirm = false
 		if sheet.ColWidths == nil {

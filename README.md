@@ -181,6 +181,8 @@ vex newfile.xlsx
 - `Ctrl+J` - Fill down (requires selection)
 - `Ctrl+L` - Fill right (requires selection)
 - `Ctrl+A` - Apply formula to range (requires selection)
+- `s` - Sort by current column ascending
+- `S` - Sort by current column descending
 
 ### File Operations
 

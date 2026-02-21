@@ -102,7 +102,7 @@ func printHelp() {
 	fmt.Println("  Navigation:  ↑↓←→ / hjkl, PgUp/PgDn, Home/End")
 	fmt.Println("  Sheets:      Tab / Shift+Tab")
 	fmt.Println("  Search:      / (search), n (next), N (prev)")
-	fmt.Println("  Actions:     Enter (details), Ctrl+G (jump), c (copy)")
+	fmt.Println("  Actions:     Enter (details), Ctrl+G (jump), c (copy), s/S (sort)")
 	fmt.Println("  Data viz:    V (select range), v (visualize)")
 	fmt.Println("  Other:       e (export), t (theme), f (formulas), ? (help), q (quit)")
 	fmt.Println("\nFor more information, visit: https://github.com/CodeOne45/vex-tui")

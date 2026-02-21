@@ -45,6 +45,8 @@ type KeyMap struct {
 	FillDown     key.Binding
 	FillRight    key.Binding
 	ApplyFormula key.Binding
+	SortAsc      key.Binding
+	SortDesc     key.Binding
 	ColWidthInc  key.Binding
 	ColWidthDec  key.Binding
 }
@@ -63,10 +65,11 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 		{k.Edit, k.Delete, k.Copy, k.Paste},
 		{k.InsertRow, k.InsertCol, k.DeleteRow, k.DeleteCol},
 		{k.FillDown, k.FillRight, k.ApplyFormula, k.ToggleForm},
+		{k.SortAsc, k.SortDesc, k.Export, k.Theme},
 		{k.Search, k.NextResult, k.PrevResult, k.ClearSearch},
-		{k.Detail, k.Jump, k.Export, k.Theme},
+		{k.Detail, k.Jump, k.Help, k.Quit},
 		{k.Save, k.SaveAs, k.Visualize, k.SelectRange},
-		{k.ColWidthInc, k.ColWidthDec, k.Help, k.Quit},
+		{k.ColWidthInc, k.ColWidthDec},
 	}
 }
 
@@ -114,6 +117,8 @@ func DefaultKeyMap() KeyMap {
 		FillDown:     key.NewBinding(key.WithKeys("ctrl+j"), key.WithHelp("^j", "fill down")),
 		FillRight:    key.NewBinding(key.WithKeys("ctrl+l"), key.WithHelp("^l", "fill right")),
 		ApplyFormula: key.NewBinding(key.WithKeys("ctrl+a"), key.WithHelp("^a", "apply formula")),
+		SortAsc:      key.NewBinding(key.WithKeys("s"), key.WithHelp("s", "sort asc")),
+		SortDesc:     key.NewBinding(key.WithKeys("S"), key.WithHelp("S", "sort desc")),
 		ColWidthInc:  key.NewBinding(key.WithKeys(">"), key.WithHelp(">", "widen col")),
 		ColWidthDec:  key.NewBinding(key.WithKeys("<"), key.WithHelp("<", "narrow col")),
 	}
