@@ -1,6 +1,7 @@
 package loader
 
 import (
+	"bufio"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -12,18 +13,45 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-// LoadFile loads an Excel or CSV file and returns the sheets
-func LoadFile(filename string) ([]models.Sheet, error) {
+// LoadFile loads an Excel or CSV file and returns the sheets.
+// delimiter is used only for CSV files; pass 0 to auto-detect.
+func LoadFile(filename string, delimiter rune) ([]models.Sheet, error) {
 	ext := strings.ToLower(filepath.Ext(filename))
 
 	switch ext {
 	case ".xlsx", ".xlsm", ".xls":
 		return loadExcel(filename)
 	case ".csv":
-		return loadCSV(filename)
+		return loadCSV(filename, delimiter)
 	default:
 		return nil, fmt.Errorf("unsupported file format: %s (supported: .xlsx, .xlsm, .xls, .csv)", ext)
 	}
+}
+
+// detectDelimiter reads the first line of a CSV file and picks the most
+// likely delimiter among ',', ';', '\t', and '|'.
+func detectDelimiter(filename string) rune {
+	file, err := os.Open(filename)
+	if err != nil {
+		return ','
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	if !scanner.Scan() {
+		return ','
+	}
+	line := scanner.Text()
+
+	candidates := []rune{',', ';', '\t', '|'}
+	best, bestCount := rune(','), 0
+	for _, r := range candidates {
+		n := strings.Count(line, string(r))
+		if n > bestCount {
+			best, bestCount = r, n
+		}
+	}
+	return best
 }
 
 // loadExcel loads an Excel file
@@ -91,7 +119,11 @@ func loadExcel(filename string) ([]models.Sheet, error) {
 }
 
 // loadCSV loads a CSV file
-func loadCSV(filename string) ([]models.Sheet, error) {
+func loadCSV(filename string, delimiter rune) ([]models.Sheet, error) {
+	if delimiter == 0 {
+		delimiter = detectDelimiter(filename)
+	}
+
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open CSV file: %w", err)
@@ -103,6 +135,7 @@ func loadCSV(filename string) ([]models.Sheet, error) {
 	}()
 
 	reader := csv.NewReader(file)
+	reader.Comma = delimiter
 	reader.ReuseRecord = true // Performance optimization
 	records, err := reader.ReadAll()
 	if err != nil {
