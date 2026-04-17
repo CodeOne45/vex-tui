@@ -32,4 +32,9 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_TAP_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+          # Personal Access Token with write access to homebrew-tap repo.
+          # Create at: GitHub → Settings → Developer settings → PATs (classic)
+          # Scopes needed: repo (full)
+          # Then add as repo secret: Settings → Secrets → Actions → HOMEBREW_TAP_TOKEN
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          SCOOP_TAP_TOKEN: ${{ secrets.SCOOP_TAP_TOKEN }}

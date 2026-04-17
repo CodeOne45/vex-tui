@@ -15,12 +15,16 @@ builds:
     goarch:
       - amd64
       - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
     binary: vex
     ldflags:
       - -s -w -X main.version={{.Version}}
 
 archives:
   - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         format: zip
@@ -30,30 +34,66 @@ archives:
       - CHANGELOG.md
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 
 changelog:
   sort: asc
+  use: github
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+  groups:
+    - title: "New Features"
+      regexp: "^feat"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^fix"
+      order: 1
+    - title: "Other"
+      order: 999
 
 brews:
   - name: vex
     homepage: "https://github.com/CodeOne45/vex-tui"
-    description: "Beautiful terminal Excel and CSV viewer with vim-style keybindings"
+    description: "Beautiful terminal Excel and CSV viewer & editor with vim-style keybindings"
     license: "MIT"
 
+    # Only upload when the token secret is available
     skip_upload: "{{ if .Env.HOMEBREW_TAP_TOKEN }}false{{ else }}true{{ end }}"
 
     repository:
       owner: CodeOne45
       name: homebrew-tap
+      branch: main
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+      pull_request:
+        enabled: false
+
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
 
     install: |
       bin.install "vex"
+
+    test: |
+      system "#{bin}/vex", "--version"
+
+scoops:
+  - name: vex
+    homepage: "https://github.com/CodeOne45/vex-tui"
+    description: "Beautiful terminal Excel and CSV viewer & editor with vim-style keybindings"
+    license: "MIT"
+    skip_upload: "{{ if .Env.SCOOP_TAP_TOKEN }}false{{ else }}true{{ end }}"
+    repository:
+      owner: CodeOne45
+      name: scoop-bucket
+      token: "{{ .Env.SCOOP_TAP_TOKEN }}"

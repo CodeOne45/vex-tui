@@ -5,6 +5,73 @@ All notable changes to Vex will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-04-17
+
+### Added
+
+#### Row Filter (`f`)
+- Press `f` to filter rows on the current column or all columns (Tab toggles scope)
+- Supports plain text (contains), `>`, `<`, `>=`, `<=`, `=` expressions for numeric and exact-match comparisons
+- Active filter shown in the title bar as `▾ <expr>`; **Esc** clears it without touching the underlying data
+
+#### Data Profile (`W`)
+- New modal showing a per-column breakdown: detected type (number / text / mixed), non-null count, null count
+- Numeric columns show Σ / avg / min / max inline; text columns show unique count and top sample values
+- Highlights the column currently under the cursor
+
+#### Sort Columns (`s` / `S` / `u`)
+- `s` sorts the current column ascending, `S` descending
+- `u` restores the original row order (pre-sort state is saved in memory)
+- Sort indicator shown in the column header and title bar; freeze-header aware
+
+#### Freeze Header Row (`Ctrl+R`)
+- Toggles the first row pinned at all times while scrolling
+- A divider line separates the frozen row from scrollable data
+- `⌶` indicator in title bar; sort respects the frozen header
+
+#### Live Column Statistics
+- When the cursor is on any numeric column, the status bar automatically shows Σ / avg / min / max / n
+- No selection needed; updates as you navigate
+
+#### Chart PNG Export (`p` in chart view)
+- Press `p` inside the chart modal to export the current chart as a beautiful PNG via [`freeze`](https://github.com/charmbracelet/freeze)
+- Output file is `<filename>-chart.png` saved next to the source file
+- If `freeze` is not on PATH the binary is located across all common Homebrew and Linux install paths automatically
+- If still not found, shows the exact install command as a status bar hint
+
+#### CSV Delimiter Auto-Detection + CLI Flag
+- Vex reads the first line of every CSV and picks the best delimiter from `,` `;` `\t` `|`
+- New `-d` / `--delimiter` flag for explicit override: `vex data.csv -d ';'`, `vex data.tsv -d '\t'`
+
+### Changed
+
+#### UI / UX
+- **Cell type coloring**: numbers render in accent color, formulas in secondary color, text in default — no configuration needed
+- **Status bar redesign**: left cluster (cell ref + dimensions + mode flags), middle cluster (column stats or selection size), right cluster (search + status message)
+- **Title bar**: `●` modified indicator appears immediately on first edit; freeze / sort / filter state shown as compact glyphs
+- **Selection highlight**: uses primary color background, much more visible than before
+- **Responsive modals**: theme picker and chart modal now scale to terminal width/height instead of hardcoded sizes
+- **Chart bar chart**: supports negative values (shown in red), `░` unfilled track, cleaner value labels
+- **Chart line chart**: Bresenham algorithm draws actual connecting lines (`·`) between data points (`●`)
+- **Chart data extraction**: auto-detects label vs value columns — works with or without a leading text column
+- **Chart type tabs**: rendered as proper tab buttons instead of a plain list
+
+#### Keybinding Changes
+- `f` — now opens row filter (was: toggle formula display)
+- `ctrl+f` — toggle formula display (moved from `f`)
+- `W` — data profile
+- `s` / `S` / `u` — sort asc / desc / unsort
+- `ctrl+r` — freeze header
+
+#### Release Workflow
+- GoReleaser config: grouped changelog, `test` stanza in Homebrew formula, Scoop bucket support
+- `Makefile`: `make tag VER=v2.1.0` tags and pushes, triggering the full CI/release pipeline; `make snapshot` for local multi-platform builds
+
+### Fixed
+
+- **Esc cancels selection**: pressing Esc in normal mode while a range is selected now cancels it (previously Esc only cleared search)
+- **Freeze binary lookup**: `freeze` is located across PATH, all Homebrew symlink paths, and the Cellar directly — fixing "not found" errors when the Homebrew symlink is broken
+
 ## [2.0.2] - 2025-02-13
 
 ### Fixed
@@ -263,6 +330,7 @@ This is a major release that transforms Vex from a viewer into a full-featured t
 - Vim-style navigation
 - Multiple sheet support
 
+[2.1.0]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.1.0
 [2.0.2]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.2
 [2.0.1]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.1
 [2.0.0]: https://github.com/CodeOne45/vex-tui/releases/tag/v2.0.0
