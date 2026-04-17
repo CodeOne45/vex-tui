@@ -65,12 +65,12 @@ type Model struct {
 	preSortSaved   bool
 
 	// Row filter
-	filterInput    textinput.Model
-	filterActive   bool
-	filterQuery    string
-	filterColAll   bool // true = search all cols, false = current col only
-	preFilterRows  [][]models.Cell
-	preFilterMax   int
+	filterInput   textinput.Model
+	filterActive  bool
+	filterQuery   string
+	filterColAll  bool // true = search all cols, false = current col only
+	preFilterRows [][]models.Cell
+	preFilterMax  int
 }
 
 // colStats holds computed statistics for a numeric column

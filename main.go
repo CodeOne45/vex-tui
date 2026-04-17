@@ -13,10 +13,10 @@ import (
 var version = "2.1.0"
 
 var (
-	showVersion   = flag.Bool("version", false, "Show version information")
-	showHelp      = new(bool)
-	themeName     = flag.String("theme", "catppuccin", "Set the color theme")
-	csvDelimiter  = flag.String("delimiter", "", "CSV delimiter character (e.g. ';', '\\t', '|'). Auto-detected if not set.")
+	showVersion  = flag.Bool("version", false, "Show version information")
+	showHelp     = new(bool)
+	themeName    = flag.String("theme", "catppuccin", "Set the color theme")
+	csvDelimiter = flag.String("delimiter", "", "CSV delimiter character (e.g. ';', '\\t', '|'). Auto-detected if not set.")
 )
 
 func main() {

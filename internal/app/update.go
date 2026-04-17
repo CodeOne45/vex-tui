@@ -804,13 +804,13 @@ func freezeLookup() (string, bool) {
 	// 2. Fixed paths.
 	home, _ := os.UserHomeDir()
 	fixed := []string{
-		"/opt/homebrew/bin/freeze",                      // macOS Apple Silicon (Homebrew symlink)
-		"/opt/homebrew/opt/freeze/bin/freeze",           // macOS Apple Silicon (Homebrew opt)
-		"/usr/local/bin/freeze",                         // macOS Intel (Homebrew symlink) + common Linux
-		"/home/linuxbrew/.linuxbrew/bin/freeze",         // Linuxbrew
-		filepath.Join(home, ".local", "bin", "freeze"),  // Linux non-root installs
-		filepath.Join(home, "go", "bin", "freeze"),      // go install
-		filepath.Join(home, ".brew", "bin", "freeze"),   // custom Homebrew prefix
+		"/opt/homebrew/bin/freeze",                     // macOS Apple Silicon (Homebrew symlink)
+		"/opt/homebrew/opt/freeze/bin/freeze",          // macOS Apple Silicon (Homebrew opt)
+		"/usr/local/bin/freeze",                        // macOS Intel (Homebrew symlink) + common Linux
+		"/home/linuxbrew/.linuxbrew/bin/freeze",        // Linuxbrew
+		filepath.Join(home, ".local", "bin", "freeze"), // Linux non-root installs
+		filepath.Join(home, "go", "bin", "freeze"),     // go install
+		filepath.Join(home, ".brew", "bin", "freeze"),  // custom Homebrew prefix
 	}
 	for _, p := range fixed {
 		if p == "" {
