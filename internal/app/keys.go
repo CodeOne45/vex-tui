@@ -47,6 +47,12 @@ type KeyMap struct {
 	ApplyFormula key.Binding
 	ColWidthInc  key.Binding
 	ColWidthDec  key.Binding
+	SortAsc      key.Binding
+	SortDesc     key.Binding
+	SortReset    key.Binding
+	FreezeHeader key.Binding
+	Filter       key.Binding
+	DataProfile  key.Binding
 }
 
 // ShortHelp returns key bindings to be shown in the mini help view
@@ -66,7 +72,9 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 		{k.Search, k.NextResult, k.PrevResult, k.ClearSearch},
 		{k.Detail, k.Jump, k.Export, k.Theme},
 		{k.Save, k.SaveAs, k.Visualize, k.SelectRange},
-		{k.ColWidthInc, k.ColWidthDec, k.Help, k.Quit},
+		{k.Filter, k.DataProfile, k.FreezeHeader, k.SortAsc},
+		{k.SortDesc, k.SortReset, k.ColWidthInc, k.ColWidthDec},
+		{k.Help, k.Quit},
 	}
 }
 
@@ -93,7 +101,7 @@ func DefaultKeyMap() KeyMap {
 		ClearSearch:  key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "clear")),
 		Detail:       key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "detail/edit")),
 		Jump:         key.NewBinding(key.WithKeys("ctrl+g"), key.WithHelp("^g", "jump")),
-		ToggleForm:   key.NewBinding(key.WithKeys("f"), key.WithHelp("f", "formulas")),
+		ToggleForm:   key.NewBinding(key.WithKeys("ctrl+f"), key.WithHelp("^f", "formulas")),
 		Copy:         key.NewBinding(key.WithKeys("c"), key.WithHelp("c", "copy")),
 		CopyRow:      key.NewBinding(key.WithKeys("C"), key.WithHelp("C", "copy row")),
 		Export:       key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "export")),
@@ -116,5 +124,11 @@ func DefaultKeyMap() KeyMap {
 		ApplyFormula: key.NewBinding(key.WithKeys("ctrl+a"), key.WithHelp("^a", "apply formula")),
 		ColWidthInc:  key.NewBinding(key.WithKeys(">"), key.WithHelp(">", "widen col")),
 		ColWidthDec:  key.NewBinding(key.WithKeys("<"), key.WithHelp("<", "narrow col")),
+		SortAsc:      key.NewBinding(key.WithKeys("s"), key.WithHelp("s", "sort asc")),
+		SortDesc:     key.NewBinding(key.WithKeys("S"), key.WithHelp("S", "sort desc")),
+		SortReset:    key.NewBinding(key.WithKeys("u"), key.WithHelp("u", "unsort")),
+		FreezeHeader: key.NewBinding(key.WithKeys("ctrl+r"), key.WithHelp("^r", "freeze header")),
+		Filter:       key.NewBinding(key.WithKeys("f"), key.WithHelp("f", "filter rows")),
+		DataProfile:  key.NewBinding(key.WithKeys("W"), key.WithHelp("W", "data profile")),
 	}
 }

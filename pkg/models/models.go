@@ -31,6 +31,8 @@ const (
 	ModeSelectRange
 	ModeEdit
 	ModeSaveAs
+	ModeFilter
+	ModeDataProfile
 )
 
 // StatusMsg represents a status message with type

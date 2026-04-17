@@ -2,6 +2,10 @@ package app
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -49,6 +53,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m.updateEdit(msg)
 		case models.ModeSaveAs:
 			return m.updateSaveAs(msg)
+		case models.ModeFilter:
+			return m.updateFilter(msg)
+		case models.ModeDataProfile:
+			m.mode = models.ModeNormal
+			return m, nil
 		default:
 			return m.updateNormal(msg)
 		}
@@ -239,6 +248,8 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.isSelecting {
 			m.isSelecting = false
 			m.status = models.StatusMsg{Message: "Selection cancelled", Type: models.StatusInfo}
+		} else if m.filterActive {
+			m.clearFilter()
 		} else if m.searchQuery != "" {
 			m.searchQuery = ""
 			m.searchResults = nil
@@ -367,6 +378,45 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.ApplyFormula):
 		m.quitConfirm = false
 		m.applyFormulaToRange()
+
+	case key.Matches(msg, m.keys.SortAsc):
+		m.quitConfirm = false
+		m.sortByColumn(m.cursorCol, true)
+
+	case key.Matches(msg, m.keys.SortDesc):
+		m.quitConfirm = false
+		m.sortByColumn(m.cursorCol, false)
+
+	case key.Matches(msg, m.keys.SortReset):
+		m.quitConfirm = false
+		m.resetSort()
+
+	case key.Matches(msg, m.keys.Filter):
+		m.quitConfirm = false
+		m.mode = models.ModeFilter
+		m.filterColAll = false
+		m.filterInput.Placeholder = fmt.Sprintf("Filter col %s — text, >100, <50, =val  (Tab=all cols)",
+			ui.ColIndexToLetter(m.cursorCol))
+		m.filterInput.SetValue("")
+		m.filterInput.Focus()
+		return m, textinput.Blink
+
+	case key.Matches(msg, m.keys.DataProfile):
+		m.quitConfirm = false
+		m.mode = models.ModeDataProfile
+		return m, nil
+
+	case key.Matches(msg, m.keys.FreezeHeader):
+		m.quitConfirm = false
+		m.freezeHeader = !m.freezeHeader
+		if m.freezeHeader {
+			if m.cursorRow == 0 && sheet.MaxRows > 1 {
+				m.cursorRow = 1
+			}
+			m.status = models.StatusMsg{Message: "Header frozen — row 1 always visible", Type: models.StatusInfo}
+		} else {
+			m.status = models.StatusMsg{Message: "Header unfrozen", Type: models.StatusInfo}
+		}
 
 	case key.Matches(msg, m.keys.ColWidthInc):
 		m.quitConfirm = false
@@ -734,8 +784,105 @@ func (m Model) updateChart(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.chartType = 2
 	case "4":
 		m.chartType = 3
+	case "p", "P":
+		m.exportChartImage()
 	}
 	return m, nil
+}
+
+// freezeLookup finds the freeze binary across macOS and Linux.
+// Search order:
+//  1. PATH (covers correctly-linked installs everywhere)
+//  2. Fixed well-known paths (Homebrew symlinks, Linuxbrew, user-local)
+//  3. Homebrew / Linuxbrew Cellar walk (catches broken symlinks)
+func freezeLookup() (string, bool) {
+	// 1. Respect PATH first — works for any correctly installed binary.
+	if p, err := exec.LookPath("freeze"); err == nil {
+		return p, true
+	}
+
+	// 2. Fixed paths.
+	home, _ := os.UserHomeDir()
+	fixed := []string{
+		"/opt/homebrew/bin/freeze",                      // macOS Apple Silicon (Homebrew symlink)
+		"/opt/homebrew/opt/freeze/bin/freeze",           // macOS Apple Silicon (Homebrew opt)
+		"/usr/local/bin/freeze",                         // macOS Intel (Homebrew symlink) + common Linux
+		"/home/linuxbrew/.linuxbrew/bin/freeze",         // Linuxbrew
+		filepath.Join(home, ".local", "bin", "freeze"),  // Linux non-root installs
+		filepath.Join(home, "go", "bin", "freeze"),      // go install
+		filepath.Join(home, ".brew", "bin", "freeze"),   // custom Homebrew prefix
+	}
+	for _, p := range fixed {
+		if p == "" {
+			continue
+		}
+		if info, err := os.Stat(p); err == nil && !info.IsDir() {
+			return p, true
+		}
+	}
+
+	// 3. Cellar walk — catches Homebrew installs whose bin symlink is missing.
+	cellarRoots := []string{
+		"/opt/homebrew/Cellar/freeze",              // Apple Silicon
+		"/usr/local/Cellar/freeze",                 // Intel macOS
+		"/home/linuxbrew/.linuxbrew/Cellar/freeze", // Linuxbrew
+	}
+	for _, root := range cellarRoots {
+		versions, err := os.ReadDir(root)
+		if err != nil {
+			continue
+		}
+		for _, v := range versions {
+			p := filepath.Join(root, v.Name(), "bin", "freeze")
+			if info, err := os.Stat(p); err == nil && !info.IsDir() {
+				return p, true
+			}
+		}
+	}
+
+	return "", false
+}
+
+// exportChartImage renders the current chart and saves it as a PNG via the
+// `freeze` CLI (github.com/charmbracelet/freeze). Falls back to a clear
+// install hint if freeze is not found.
+func (m *Model) exportChartImage() {
+	freezePath, found := freezeLookup()
+	if !found {
+		m.status = models.StatusMsg{
+			Message: "freeze not found — install: brew install charmbracelet/tap/freeze",
+			Type:    models.StatusWarning,
+		}
+		return
+	}
+
+	// Build the output filename next to the source file.
+	base := strings.TrimSuffix(filepath.Base(m.filename), filepath.Ext(m.filename))
+	outFile := base + "-chart.png"
+
+	// Render the chart modal (returns an ANSI string from lipgloss).
+	chartANSI := m.renderChart()
+
+	cmd := exec.Command(freezePath,
+		"--output", outFile,
+		"--padding", "20,30",
+		"--border.radius", "8",
+		"--shadow",
+	)
+	cmd.Stdin = strings.NewReader(chartANSI)
+
+	if err := cmd.Run(); err != nil {
+		m.status = models.StatusMsg{
+			Message: fmt.Sprintf("Export failed: %v", err),
+			Type:    models.StatusError,
+		}
+		return
+	}
+
+	m.status = models.StatusMsg{
+		Message: fmt.Sprintf("✓ Saved %s", outFile),
+		Type:    models.StatusSuccess,
+	}
 }
 
 // updateSelectRange handles range selection mode
@@ -787,4 +934,230 @@ func abs(x int) int {
 		return -x
 	}
 	return x
+}
+
+// resetSort restores the pre-sort row order.
+func (m *Model) resetSort() {
+	if !m.preSortSaved {
+		m.status = models.StatusMsg{Message: "No sort to undo", Type: models.StatusInfo}
+		return
+	}
+	sheet := &m.sheets[m.currentSheet]
+	sheet.Rows = m.preSortRows
+	sheet.MaxRows = m.preSortMaxRows
+	m.preSortSaved = false
+	m.preSortRows = nil
+	m.sortActive = false
+	m.cursorRow = 0
+	m.offsetRow = 0
+	m.status = models.StatusMsg{Message: "Sort cleared — original order restored", Type: models.StatusInfo}
+}
+
+// updateFilter handles the filter input mode.
+func (m Model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
+	switch msg.Type {
+	case tea.KeyEscape:
+		m.mode = models.ModeNormal
+		m.filterInput.Blur()
+		return m, nil
+
+	case tea.KeyTab:
+		m.filterColAll = !m.filterColAll
+		if m.filterColAll {
+			m.filterInput.Placeholder = "Filter ALL columns — text, >100, <50, =val"
+		} else {
+			m.filterInput.Placeholder = fmt.Sprintf("Filter col %s — text, >100, <50, =val  (Tab=all cols)",
+				ui.ColIndexToLetter(m.cursorCol))
+		}
+		return m, nil
+
+	case tea.KeyEnter:
+		expr := strings.TrimSpace(m.filterInput.Value())
+		m.filterInput.Blur()
+		m.mode = models.ModeNormal
+		if expr == "" {
+			m.clearFilter()
+		} else {
+			m.applyFilter(expr)
+		}
+		return m, nil
+	}
+
+	m.filterInput, cmd = m.filterInput.Update(msg)
+	return m, cmd
+}
+
+// applyFilter filters the current sheet rows by the given expression.
+// Expression formats: plain text (contains), >N, <N, >=N, <=N, =exact.
+func (m *Model) applyFilter(expr string) {
+	sheet := &m.sheets[m.currentSheet]
+
+	// Save original rows if not already filtered
+	if !m.filterActive {
+		rows := make([][]models.Cell, len(sheet.Rows))
+		copy(rows, sheet.Rows)
+		m.preFilterRows = rows
+		m.preFilterMax = sheet.MaxRows
+	}
+
+	col := m.cursorCol
+	matchRow := func(row []models.Cell) bool {
+		if m.filterColAll {
+			for _, cell := range row {
+				if matchExpr(cell.Value, expr) {
+					return true
+				}
+			}
+			return false
+		}
+		if col < len(row) {
+			return matchExpr(row[col].Value, expr)
+		}
+		return false
+	}
+
+	var filtered [][]models.Cell
+	for _, row := range m.preFilterRows {
+		if matchRow(row) {
+			filtered = append(filtered, row)
+		}
+	}
+
+	if len(filtered) == 0 {
+		m.status = models.StatusMsg{Message: "No rows match — filter not applied", Type: models.StatusWarning}
+		return
+	}
+
+	sheet.Rows = filtered
+	sheet.MaxRows = len(filtered)
+	m.filterActive = true
+	m.filterQuery = expr
+	m.cursorRow = 0
+	m.offsetRow = 0
+
+	scope := fmt.Sprintf("col %s", ui.ColIndexToLetter(col))
+	if m.filterColAll {
+		scope = "all cols"
+	}
+	m.status = models.StatusMsg{
+		Message: fmt.Sprintf("Filter [%s] on %s — %d/%d rows  (Esc or f + Enter to clear)",
+			expr, scope, len(filtered), m.preFilterMax),
+		Type: models.StatusSuccess,
+	}
+}
+
+// clearFilter restores the pre-filter rows.
+func (m *Model) clearFilter() {
+	if !m.filterActive {
+		return
+	}
+	sheet := &m.sheets[m.currentSheet]
+	sheet.Rows = m.preFilterRows
+	sheet.MaxRows = m.preFilterMax
+	m.filterActive = false
+	m.filterQuery = ""
+	m.preFilterRows = nil
+	m.cursorRow = 0
+	m.offsetRow = 0
+	m.status = models.StatusMsg{Message: "Filter cleared", Type: models.StatusInfo}
+}
+
+// matchExpr tests whether a cell value satisfies the filter expression.
+func matchExpr(value, expr string) bool {
+	// Numeric comparisons
+	for _, prefix := range []string{">=", "<=", ">", "<", "="} {
+		if strings.HasPrefix(expr, prefix) {
+			operand := strings.TrimSpace(expr[len(prefix):])
+			target, err1 := strconv.ParseFloat(operand, 64)
+			actual, err2 := strconv.ParseFloat(value, 64)
+			if err1 != nil || err2 != nil {
+				if prefix == "=" {
+					return strings.EqualFold(value, operand)
+				}
+				return false
+			}
+			switch prefix {
+			case ">=":
+				return actual >= target
+			case "<=":
+				return actual <= target
+			case ">":
+				return actual > target
+			case "<":
+				return actual < target
+			case "=":
+				return actual == target
+			}
+		}
+	}
+	// Default: case-insensitive contains
+	return strings.Contains(strings.ToLower(value), strings.ToLower(expr))
+}
+
+// sortByColumn sorts the sheet rows by the given column. If freezeHeader is
+// enabled the first row is treated as a header and kept in place.
+func (m *Model) sortByColumn(col int, ascending bool) {
+	sheet := &m.sheets[m.currentSheet]
+	if len(sheet.Rows) == 0 {
+		return
+	}
+
+	// Save original order before first sort
+	if !m.preSortSaved {
+		saved := make([][]models.Cell, len(sheet.Rows))
+		copy(saved, sheet.Rows)
+		m.preSortRows = saved
+		m.preSortMaxRows = sheet.MaxRows
+		m.preSortSaved = true
+	}
+
+	startRow := 0
+	if m.freezeHeader && len(sheet.Rows) > 1 {
+		startRow = 1
+	}
+
+	data := sheet.Rows[startRow:]
+	sort.SliceStable(data, func(i, j int) bool {
+		vi, vj := "", ""
+		if col < len(data[i]) {
+			vi = data[i][col].Value
+		}
+		if col < len(data[j]) {
+			vj = data[j][col].Value
+		}
+		ni, erri := strconv.ParseFloat(vi, 64)
+		nj, errj := strconv.ParseFloat(vj, 64)
+		if erri == nil && errj == nil {
+			if ascending {
+				return ni < nj
+			}
+			return ni > nj
+		}
+		if ascending {
+			return strings.ToLower(vi) < strings.ToLower(vj)
+		}
+		return strings.ToLower(vi) > strings.ToLower(vj)
+	})
+
+	// Fix row indices after sort
+	for i := range sheet.Rows {
+		for j := range sheet.Rows[i] {
+			sheet.Rows[i][j].Row = i
+		}
+	}
+
+	m.modified = true
+	m.sortCol = col
+	m.sortAsc = ascending
+	m.sortActive = true
+	dir := "↑"
+	if !ascending {
+		dir = "↓"
+	}
+	m.status = models.StatusMsg{
+		Message: fmt.Sprintf("Sorted by %s %s", ui.ColIndexToLetter(col), dir),
+		Type:    models.StatusSuccess,
+	}
 }
