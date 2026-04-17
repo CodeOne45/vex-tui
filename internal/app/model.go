@@ -1,6 +1,8 @@
 package app
 
 import (
+	"strconv"
+
 	"github.com/CodeOne45/vex-tui/internal/theme"
 	"github.com/CodeOne45/vex-tui/internal/ui"
 	"github.com/CodeOne45/vex-tui/pkg/models"
@@ -50,6 +52,34 @@ type Model struct {
 
 	// Pending key for multi-key sequences (dd, dc, gg)
 	pendingKey string
+
+	// Display options
+	freezeHeader bool
+	sortCol      int
+	sortAsc      bool
+	sortActive   bool
+
+	// Sort undo — rows saved before first sort
+	preSortRows    [][]models.Cell
+	preSortMaxRows int
+	preSortSaved   bool
+
+	// Row filter
+	filterInput    textinput.Model
+	filterActive   bool
+	filterQuery    string
+	filterColAll   bool // true = search all cols, false = current col only
+	preFilterRows  [][]models.Cell
+	preFilterMax   int
+}
+
+// colStats holds computed statistics for a numeric column
+type colStats struct {
+	Count int
+	Sum   float64
+	Avg   float64
+	Min   float64
+	Max   float64
 }
 
 // NewModel creates a new application model
@@ -88,6 +118,11 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 	saveAsInput.CharLimit = 200
 	saveAsInput.Width = 40
 
+	filterInput := textinput.New()
+	filterInput.Placeholder = "text, >100, <50, =exact  (Tab = all cols)"
+	filterInput.CharLimit = 100
+	filterInput.Width = 50
+
 	fileFormat := "xlsx"
 	if len(filename) > 4 && filename[len(filename)-4:] == ".csv" {
 		fileFormat = "csv"
@@ -101,6 +136,7 @@ func NewModel(filename string, sheets []models.Sheet, themeName string) Model {
 		exportInput:  exportInput,
 		editInput:    editInput,
 		saveAsInput:  saveAsInput,
+		filterInput:  filterInput,
 		help:         help.New(),
 		keys:         DefaultKeyMap(),
 		filename:     filename,
@@ -152,6 +188,40 @@ func (m *Model) centerView() {
 
 	m.offsetRow = ui.Max(0, m.cursorRow-visibleRows/2)
 	m.offsetCol = ui.Max(0, m.cursorCol-visibleCols/2)
+}
+
+// computeColStats returns statistics for the current cursor column, or nil if non-numeric.
+func (m *Model) computeColStats() *colStats {
+	sheet := m.sheets[m.currentSheet]
+	col := m.cursorCol
+
+	var nums []float64
+	startRow := 0
+	if m.freezeHeader && len(sheet.Rows) > 1 {
+		startRow = 1
+	}
+	for i := startRow; i < len(sheet.Rows); i++ {
+		if col < len(sheet.Rows[i]) && sheet.Rows[i][col].Value != "" {
+			if v, err := strconv.ParseFloat(sheet.Rows[i][col].Value, 64); err == nil {
+				nums = append(nums, v)
+			}
+		}
+	}
+	if len(nums) == 0 {
+		return nil
+	}
+
+	sum, mn, mx := nums[0], nums[0], nums[0]
+	for _, v := range nums[1:] {
+		sum += v
+		if v < mn {
+			mn = v
+		}
+		if v > mx {
+			mx = v
+		}
+	}
+	return &colStats{Count: len(nums), Sum: sum, Avg: sum / float64(len(nums)), Min: mn, Max: mx}
 }
 
 // isSearchMatch checks if a cell is a search match
