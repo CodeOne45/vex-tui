@@ -1,7 +1,7 @@
 .PHONY: build run clean install test lint fmt help release
 
 BINARY_NAME=vex
-VERSION=2.0.2
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "2.0.2")
 BUILD_DIR=dist
 GO_FILES=$(shell find . -name '*.go' -type f)
 
@@ -78,6 +78,18 @@ release: clean
 	@GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.version=$(VERSION)" -trimpath -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe .
 	@cd $(BUILD_DIR) && sha256sum * > checksums.txt
 	@echo "Release builds created in $(BUILD_DIR)/"
+
+# Tag and push a new release — triggers GitHub Actions to build + publish
+# Usage: make tag VER=v2.1.0
+tag:
+	@if [ -z "$(VER)" ]; then echo "Usage: make tag VER=v2.1.0"; exit 1; fi
+	git tag -a $(VER) -m "Release $(VER)"
+	git push origin $(VER)
+	@echo "✓ Tag $(VER) pushed — GitHub Actions will build and publish automatically."
+
+# Build a local snapshot with goreleaser (no publish)
+snapshot:
+	goreleaser release --snapshot --clean
 
 # Security audit
 audit:

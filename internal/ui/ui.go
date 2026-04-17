@@ -16,27 +16,32 @@ const (
 
 // Styles holds all lipgloss styles for the UI
 type Styles struct {
-	Title           lipgloss.Style
-	Header          lipgloss.Style
-	HeaderHighlight lipgloss.Style
-	Cell            lipgloss.Style
-	SelectedCell    lipgloss.Style
-	RowHighlight    lipgloss.Style
-	ColHighlight    lipgloss.Style
-	SearchMatch     lipgloss.Style
-	RowNum          lipgloss.Style
-	SelectedRowNum  lipgloss.Style
-	StatusBar       lipgloss.Style
-	SearchBar       lipgloss.Style
-	SearchPrompt    lipgloss.Style
-	Modal           lipgloss.Style
-	ModalTitle      lipgloss.Style
-	ModalContent    lipgloss.Style
-	ModalKey        lipgloss.Style
-	ModalValue      lipgloss.Style
-	Help            lipgloss.Style
-	FormulaBar      lipgloss.Style
-	Separator       lipgloss.Style
+	Title            lipgloss.Style
+	Header           lipgloss.Style
+	HeaderHighlight  lipgloss.Style
+	Cell             lipgloss.Style
+	NumberCell       lipgloss.Style
+	FormulaCell      lipgloss.Style
+	SelectedCell     lipgloss.Style
+	SelectionCell    lipgloss.Style
+	FrozenHeaderCell lipgloss.Style
+	FrozenDivider    lipgloss.Style
+	RowHighlight     lipgloss.Style
+	ColHighlight     lipgloss.Style
+	SearchMatch      lipgloss.Style
+	RowNum           lipgloss.Style
+	SelectedRowNum   lipgloss.Style
+	StatusBar        lipgloss.Style
+	SearchBar        lipgloss.Style
+	SearchPrompt     lipgloss.Style
+	Modal            lipgloss.Style
+	ModalTitle       lipgloss.Style
+	ModalContent     lipgloss.Style
+	ModalKey         lipgloss.Style
+	ModalValue       lipgloss.Style
+	Help             lipgloss.Style
+	FormulaBar       lipgloss.Style
+	Separator        lipgloss.Style
 }
 
 // InitStyles creates and returns styles based on current theme
@@ -68,11 +73,33 @@ func InitStyles() *Styles {
 			Foreground(t.Text).
 			Width(MinCellWidth),
 
+		NumberCell: lipgloss.NewStyle().
+			Foreground(t.Accent).
+			Width(MinCellWidth),
+
+		FormulaCell: lipgloss.NewStyle().
+			Foreground(t.Secondary).
+			Width(MinCellWidth),
+
 		SelectedCell: lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#000000")).
 			Background(t.CellHighlight).
 			Bold(true).
 			Width(MinCellWidth),
+
+		SelectionCell: lipgloss.NewStyle().
+			Foreground(t.Background).
+			Background(t.Primary).
+			Width(MinCellWidth),
+
+		FrozenHeaderCell: lipgloss.NewStyle().
+			Foreground(t.Primary).
+			Background(t.Border).
+			Bold(true).
+			Width(MinCellWidth),
+
+		FrozenDivider: lipgloss.NewStyle().
+			Foreground(t.Primary),
 
 		RowHighlight: lipgloss.NewStyle().
 			Foreground(t.Text).

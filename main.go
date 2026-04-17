@@ -10,13 +10,13 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var version = "2.0.2"
+var version = "2.1.0"
 
 var (
-	showVersion   = flag.Bool("version", false, "Show version information")
-	showHelp      = new(bool)
-	themeName     = flag.String("theme", "catppuccin", "Set the color theme")
-	csvDelimiter  = flag.String("delimiter", "", "CSV delimiter character (e.g. ';', '\\t', '|'). Auto-detected if not set.")
+	showVersion  = flag.Bool("version", false, "Show version information")
+	showHelp     = new(bool)
+	themeName    = flag.String("theme", "catppuccin", "Set the color theme")
+	csvDelimiter = flag.String("delimiter", "", "CSV delimiter character (e.g. ';', '\\t', '|'). Auto-detected if not set.")
 )
 
 func main() {
@@ -120,12 +120,16 @@ func printHelp() {
 	fmt.Println("  vex data.tsv -d '\\t'")
 	fmt.Println("  vex sales.xlsx -t tokyo-night")
 	fmt.Println("\nKEYBOARD SHORTCUTS:")
-	fmt.Println("  Navigation:  ↑↓←→ / hjkl, PgUp/PgDn, Home/End")
+	fmt.Println("  Navigation:  ↑↓←→ / hjkl, PgUp/PgDn, Home/End, gg/G")
 	fmt.Println("  Sheets:      Tab / Shift+Tab")
-	fmt.Println("  Search:      / (search), n (next), N (prev)")
-	fmt.Println("  Actions:     Enter (details), Ctrl+G (jump), c (copy)")
-	fmt.Println("  Data viz:    V (select range), v (visualize)")
-	fmt.Println("  Other:       e (export), t (theme), f (formulas), ? (help), q (quit)")
+	fmt.Println("  Search:      / (search), n/N (next/prev), Esc (clear)")
+	fmt.Println("  Filter:      f (filter rows), Esc (clear filter)")
+	fmt.Println("  Sort:        s (asc), S (desc), u (unsort/restore)")
+	fmt.Println("  Data:        W (data profile), Ctrl+R (freeze header)")
+	fmt.Println("  Edit:        i (edit), x (delete), dd (row), dc (col)")
+	fmt.Println("  Copy/paste:  c (cell), C (row), p (paste)")
+	fmt.Println("  Visualize:   V (select), v (chart), 1-4 (chart type)")
+	fmt.Println("  File:        Ctrl+S (save), e (export), q (quit)")
 	fmt.Println("\nFor more information, visit: https://github.com/CodeOne45/vex-tui")
 }
 
