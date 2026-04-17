@@ -236,7 +236,10 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.ClearSearch):
 		m.quitConfirm = false
-		if m.searchQuery != "" {
+		if m.isSelecting {
+			m.isSelecting = false
+			m.status = models.StatusMsg{Message: "Selection cancelled", Type: models.StatusInfo}
+		} else if m.searchQuery != "" {
 			m.searchQuery = ""
 			m.searchResults = nil
 			m.searchIndex = 0

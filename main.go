@@ -13,15 +13,17 @@ import (
 var version = "2.0.2"
 
 var (
-	showVersion = flag.Bool("version", false, "Show version information")
-	showHelp    = new(bool)
-	themeName   = flag.String("theme", "catppuccin", "Set the color theme")
+	showVersion   = flag.Bool("version", false, "Show version information")
+	showHelp      = new(bool)
+	themeName     = flag.String("theme", "catppuccin", "Set the color theme")
+	csvDelimiter  = flag.String("delimiter", "", "CSV delimiter character (e.g. ';', '\\t', '|'). Auto-detected if not set.")
 )
 
 func main() {
 	flag.BoolVar(showHelp, "help", false, "Show help information")
 	flag.BoolVar(showHelp, "h", false, "Show help information (shorthand)")
 	flag.StringVar(themeName, "t", "catppuccin", "Set the color theme (shorthand)")
+	flag.StringVar(csvDelimiter, "d", "", "CSV delimiter character (shorthand)")
 	flag.Parse()
 
 	if *showVersion {
@@ -48,8 +50,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Parse optional CSV delimiter
+	var delimiter rune
+	if *csvDelimiter != "" {
+		d := *csvDelimiter
+		if d == `\t` || d == "tab" {
+			delimiter = '\t'
+		} else {
+			runes := []rune(d)
+			if len(runes) != 1 {
+				fmt.Fprintf(os.Stderr, "Error: delimiter must be a single character (got %q)\n", d)
+				os.Exit(1)
+			}
+			delimiter = runes[0]
+		}
+	}
+
 	// Load file
-	sheets, err := loader.LoadFile(filename)
+	sheets, err := loader.LoadFile(filename, delimiter)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading file: %v\n", err)
 		os.Exit(1)
@@ -87,9 +105,10 @@ func printHelp() {
 	fmt.Println("\nARGUMENTS:")
 	fmt.Println("  <file>    Path to Excel (.xlsx, .xlsm, .xls) or CSV file")
 	fmt.Println("\nOPTIONS:")
-	fmt.Println("  -t, --theme <name>    Set color theme (default: catppuccin)")
-	fmt.Println("  --version             Show version information")
-	fmt.Println("  --help                Show this help message")
+	fmt.Println("  -t, --theme <name>        Set color theme (default: catppuccin)")
+	fmt.Println("  -d, --delimiter <char>    CSV delimiter (default: auto-detect). Use \\t for tab.")
+	fmt.Println("  --version                 Show version information")
+	fmt.Println("  --help                    Show this help message")
 	fmt.Println("\nAVAILABLE THEMES:")
 	for _, name := range app.GetThemeNames() {
 		fmt.Printf("  • %s\n", name)
@@ -97,6 +116,8 @@ func printHelp() {
 	fmt.Println("\nEXAMPLES:")
 	fmt.Println("  vex data.xlsx")
 	fmt.Println("  vex report.csv --theme nord")
+	fmt.Println("  vex data.csv -d ';'")
+	fmt.Println("  vex data.tsv -d '\\t'")
 	fmt.Println("  vex sales.xlsx -t tokyo-night")
 	fmt.Println("\nKEYBOARD SHORTCUTS:")
 	fmt.Println("  Navigation:  ↑↓←→ / hjkl, PgUp/PgDn, Home/End")
