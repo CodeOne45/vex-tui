@@ -73,29 +73,19 @@ func (m Model) updateEdit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 // startEdit initializes edit mode for current cell
 func (m *Model) startEdit() {
-	sheet := &m.sheets[m.currentSheet]
-	if m.cursorRow >= len(sheet.Rows) {
-		sheet.Rows = append(sheet.Rows, make([][]models.Cell, m.cursorRow-len(sheet.Rows)+1)...)
-	}
-	if m.cursorRow >= len(sheet.Rows) {
-		for i := len(sheet.Rows); i <= m.cursorRow; i++ {
-			sheet.Rows = append(sheet.Rows, make([]models.Cell, sheet.MaxCols))
-		}
-	}
-	if m.cursorCol >= len(sheet.Rows[m.cursorRow]) {
-		oldLen := len(sheet.Rows[m.cursorRow])
-		newRow := make([]models.Cell, sheet.MaxCols)
-		copy(newRow, sheet.Rows[m.cursorRow])
-		for i := oldLen; i < len(newRow); i++ {
-			newRow[i] = models.Cell{Row: m.cursorRow, Col: i}
-		}
-		sheet.Rows[m.cursorRow] = newRow
-	}
+	sheet := m.sheets[m.currentSheet]
 
-	cell := sheet.Rows[m.cursorRow][m.cursorCol]
-	value := cell.Value
-	if m.showFormulas && cell.Formula != "" {
-		value = "=" + cell.Formula
+	// Read the current value without growing the sheet. Entering edit mode is
+	// not itself an edit: if the user cancels with Esc, an untouched file (in
+	// particular an empty one, which loads with MaxRows/MaxCols == 0) must
+	// round-trip unchanged. The grid is grown lazily in commitEdit instead.
+	value := ""
+	if m.cursorRow < len(sheet.Rows) && m.cursorCol < len(sheet.Rows[m.cursorRow]) {
+		cell := sheet.Rows[m.cursorRow][m.cursorCol]
+		value = cell.Value
+		if m.showFormulas && cell.Formula != "" {
+			value = "=" + cell.Formula
+		}
 	}
 
 	m.editInput.SetValue(value)
@@ -104,7 +94,39 @@ func (m *Model) startEdit() {
 	m.editInput.CursorEnd()
 	m.isEditing = true
 	m.mode = models.ModeEdit
-	m.modified = true
+}
+
+// ensureCell grows the sheet so that (row, col) is addressable, allocating any
+// missing rows and widening the target row as needed, and keeps MaxRows/MaxCols
+// in sync. Empty files load with MaxRows/MaxCols == 0; sizing a new row to
+// MaxCols alone would produce a zero-length row and panic when the cell is
+// indexed, which is what previously crashed when pressing `i` on a blank file.
+func ensureCell(sheet *models.Sheet, row, col int) {
+	width := sheet.MaxCols
+	if col+1 > width {
+		width = col + 1
+	}
+
+	for len(sheet.Rows) <= row {
+		sheet.Rows = append(sheet.Rows, make([]models.Cell, 0, width))
+	}
+
+	if col >= len(sheet.Rows[row]) {
+		oldLen := len(sheet.Rows[row])
+		newRow := make([]models.Cell, width)
+		copy(newRow, sheet.Rows[row])
+		for i := oldLen; i < len(newRow); i++ {
+			newRow[i] = models.Cell{Row: row, Col: i}
+		}
+		sheet.Rows[row] = newRow
+	}
+
+	if width > sheet.MaxCols {
+		sheet.MaxCols = width
+	}
+	if row+1 > sheet.MaxRows {
+		sheet.MaxRows = row + 1
+	}
 }
 
 // commitEdit saves the current edit to the cell
@@ -114,20 +136,7 @@ func (m *Model) commitEdit() {
 	// Trim leading/trailing whitespace but preserve internal newlines
 	value = strings.TrimRight(strings.TrimLeft(value, " \t"), " \t\r")
 
-	if m.cursorRow >= len(sheet.Rows) {
-		for i := len(sheet.Rows); i <= m.cursorRow; i++ {
-			sheet.Rows = append(sheet.Rows, make([]models.Cell, sheet.MaxCols))
-		}
-	}
-	if m.cursorCol >= len(sheet.Rows[m.cursorRow]) {
-		oldLen := len(sheet.Rows[m.cursorRow])
-		newRow := make([]models.Cell, sheet.MaxCols)
-		copy(newRow, sheet.Rows[m.cursorRow])
-		for i := oldLen; i < len(newRow); i++ {
-			newRow[i] = models.Cell{Row: m.cursorRow, Col: i}
-		}
-		sheet.Rows[m.cursorRow] = newRow
-	}
+	ensureCell(sheet, m.cursorRow, m.cursorCol)
 
 	cell := &sheet.Rows[m.cursorRow][m.cursorCol]
 	cell.Row = m.cursorRow

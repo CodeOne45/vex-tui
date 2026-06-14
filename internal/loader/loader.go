@@ -112,7 +112,6 @@ func loadExcel(filename string) ([]models.Sheet, error) {
 			sheet.Rows = append(sheet.Rows, cellRow)
 		}
 
-		ensureEditable(&sheet)
 		sheets = append(sheets, sheet)
 	}
 
@@ -166,24 +165,7 @@ func loadCSV(filename string, delimiter rune) ([]models.Sheet, error) {
 		sheet.Rows = append(sheet.Rows, cellRow)
 	}
 
-	ensureEditable(&sheet)
 	return []models.Sheet{sheet}, nil
-}
-
-// ensureEditable guarantees a sheet has at least one row and one column so
-// the editor can place a cursor and start editing. Empty files (e.g. a 0-byte
-// CSV or an Excel sheet with no rows) would otherwise leave MaxCols=0, causing
-// an out-of-range panic when entering edit mode on cell A1.
-func ensureEditable(sheet *models.Sheet) {
-	if sheet.MaxCols == 0 {
-		sheet.MaxCols = 1
-	}
-	if sheet.MaxRows == 0 {
-		sheet.MaxRows = 1
-	}
-	if len(sheet.Rows) == 0 {
-		sheet.Rows = append(sheet.Rows, []models.Cell{{Row: 0, Col: 0}})
-	}
 }
 
 // ExportToCSV exports a sheet to CSV format
