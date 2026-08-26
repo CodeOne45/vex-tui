@@ -224,6 +224,9 @@ func (m *Model) insertRow() {
 func (m *Model) insertColumn() {
 	sheet := &m.sheets[m.currentSheet]
 	for i := range sheet.Rows {
+		for j := len(sheet.Rows[i]); j < m.cursorCol; j++ {
+			sheet.Rows[i] = append(sheet.Rows[i], models.Cell{Row: i, Col: j})
+		}
 		newCell := models.Cell{Row: i, Col: m.cursorCol}
 		sheet.Rows[i] = append(sheet.Rows[i][:m.cursorCol], append([]models.Cell{newCell}, sheet.Rows[i][m.cursorCol:]...)...)
 
